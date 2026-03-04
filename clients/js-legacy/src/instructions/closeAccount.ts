@@ -11,12 +11,12 @@ import {
 import { addSigners } from './internal.js';
 import { TokenInstruction } from './types.js';
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export interface CloseAccountInstructionData {
     instruction: TokenInstruction.CloseAccount;
 }
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export const closeAccountInstructionData = struct<CloseAccountInstructionData>([u8('instruction')]);
 
 /**
@@ -88,7 +88,7 @@ export function decodeCloseAccountInstruction(
     if (data.instruction !== TokenInstruction.CloseAccount) throw new TokenInvalidInstructionTypeError();
     if (!account || !destination || !authority) throw new TokenInvalidInstructionKeysError();
 
-    // TODO: key checks?
+    // Optional: further key validity checks.
 
     return {
         programId,

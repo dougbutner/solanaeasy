@@ -11,13 +11,13 @@ import {
 } from '../errors.js';
 import { TokenInstruction } from './types.js';
 
-/** TODO: docs */
+/** Instruction data for AmountToUiAmount (read-only). */
 export interface AmountToUiAmountInstructionData {
     instruction: TokenInstruction.AmountToUiAmount;
     amount: bigint;
 }
 
-/** TODO: docs */
+/** Layout for AmountToUiAmount instruction data. */
 export const amountToUiAmountInstructionData = struct<AmountToUiAmountInstructionData>([
     u8('instruction'),
     u64('amount'),

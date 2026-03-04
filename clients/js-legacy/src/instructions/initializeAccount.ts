@@ -10,12 +10,12 @@ import {
 } from '../errors.js';
 import { TokenInstruction } from './types.js';
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export interface InitializeAccountInstructionData {
     instruction: TokenInstruction.InitializeAccount;
 }
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export const initializeAccountInstructionData = struct<InitializeAccountInstructionData>([u8('instruction')]);
 
 /**
@@ -83,7 +83,7 @@ export function decodeInitializeAccountInstruction(
     if (data.instruction !== TokenInstruction.InitializeAccount) throw new TokenInvalidInstructionTypeError();
     if (!account || !mint || !owner || !rent) throw new TokenInvalidInstructionKeysError();
 
-    // TODO: key checks?
+    // Optional: further key validity checks.
 
     return {
         programId,

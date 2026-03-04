@@ -12,7 +12,7 @@ import {
 import { TokenInstruction } from './types.js';
 import { COptionPublicKeyLayout } from '../serialization.js';
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export interface InitializeMint2InstructionData {
     instruction: TokenInstruction.InitializeMint2;
     decimals: number;
@@ -20,7 +20,7 @@ export interface InitializeMint2InstructionData {
     freezeAuthority: PublicKey | null;
 }
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export const initializeMint2InstructionData = struct<InitializeMint2InstructionData>([
     u8('instruction'),
     u8('decimals'),

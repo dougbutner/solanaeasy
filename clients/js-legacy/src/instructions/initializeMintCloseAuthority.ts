@@ -12,13 +12,13 @@ import {
 import { TokenInstruction } from './types.js';
 import { COptionPublicKeyLayout } from '../serialization.js';
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export interface InitializeMintCloseAuthorityInstructionData {
     instruction: TokenInstruction.InitializeMintCloseAuthority;
     closeAuthority: PublicKey | null;
 }
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export const initializeMintCloseAuthorityInstructionData = struct<InitializeMintCloseAuthorityInstructionData>([
     u8('instruction'),
     new COptionPublicKeyLayout('closeAuthority'),

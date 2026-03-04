@@ -82,7 +82,7 @@ export function decodeInitializeAccount3Instruction(
     if (data.instruction !== TokenInstruction.InitializeAccount3) throw new TokenInvalidInstructionTypeError();
     if (!account || !mint) throw new TokenInvalidInstructionKeysError();
 
-    // TODO: key checks?
+    // Optional: further key validity checks.
 
     return {
         programId,

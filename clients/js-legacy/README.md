@@ -10,6 +10,7 @@ A TypeScript library for interacting with the SPL Token and Token-2022 programs.
 ## Links
 
 - [TypeScript Docs](https://solana-labs.github.io/solana-program-library/token/js/)
+- [Confidential transfer](./CONFIDENTIAL_TRANSFER.md) — how to use confidential transfer from JS (generated client or CLI).
 - [FAQs (Frequently Asked Questions)](#faqs)
 - [Install](#install)
 - [Build from Source](#build-from-source)

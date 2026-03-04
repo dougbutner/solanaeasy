@@ -25,7 +25,7 @@ export enum TransferFeeInstruction {
 
 // InitializeTransferFeeConfig
 
-/** TODO: docs */
+/** Instruction data for InitializeTransferFeeConfig extension. */
 export interface InitializeTransferFeeConfigInstructionData {
     instruction: TokenInstruction.TransferFeeExtension;
     transferFeeInstruction: TransferFeeInstruction.InitializeTransferFeeConfig;
@@ -35,7 +35,7 @@ export interface InitializeTransferFeeConfigInstructionData {
     maximumFee: bigint;
 }
 
-/** TODO: docs */
+/** Layout for InitializeTransferFeeConfig instruction data. */
 export const initializeTransferFeeConfigInstructionData = struct<InitializeTransferFeeConfigInstructionData>([
     u8('instruction'),
     u8('transferFeeInstruction'),

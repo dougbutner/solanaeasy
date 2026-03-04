@@ -1,1 +1,1 @@
-export {}; // TODO: implement
+export {}; // InitializeMultisig2 instruction not yet implemented in js-legacy.

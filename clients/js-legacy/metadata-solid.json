@@ -1,0 +1,21 @@
+{
+  "name": "SOLID",
+  "symbol": "SOLID",
+  "description": "SOLID stacks gold to back the crypto markets. 2% transfer fee. Token-2022. Entertainment only.",
+  "image": "https://raw.githubusercontent.com/alcorexchange/alcor-ui/refs/heads/master/assets/tokens/proton/easy_mon3y.png",
+  "website": "https://t.me/flextokens",
+  "twitter": "https://twitter.com/flextokens",
+  "telegram": "https://t.me/flextokens",
+  "decimals": 6,
+  "supply": "999369",
+  "attributes": [
+    {
+      "trait_type": "Transfer Fee",
+      "value": "2%"
+    },
+    {
+      "trait_type": "Program",
+      "value": "Token-2022"
+    }
+  ]
+}

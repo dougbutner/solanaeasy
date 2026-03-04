@@ -12,14 +12,14 @@ export enum DefaultAccountStateInstruction {
     Update = 1,
 }
 
-/** TODO: docs */
+/** Instruction data for Default Account State extension. */
 export interface DefaultAccountStateInstructionData {
     instruction: TokenInstruction.DefaultAccountStateExtension;
     defaultAccountStateInstruction: DefaultAccountStateInstruction;
     accountState: AccountState;
 }
 
-/** TODO: docs */
+/** Layout for Default Account State extension instruction data. */
 export const defaultAccountStateInstructionData = struct<DefaultAccountStateInstructionData>([
     u8('instruction'),
     u8('defaultAccountStateInstruction'),

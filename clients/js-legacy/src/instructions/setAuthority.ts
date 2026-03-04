@@ -34,14 +34,14 @@ export enum AuthorityType {
     PausableConfig = 16,
 }
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export interface SetAuthorityInstructionData {
     instruction: TokenInstruction.SetAuthority;
     authorityType: AuthorityType;
     newAuthority: PublicKey | null;
 }
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export const setAuthorityInstructionData = struct<SetAuthorityInstructionData>([
     u8('instruction'),
     u8('authorityType'),
@@ -125,7 +125,7 @@ export function decodeSetAuthorityInstruction(
     if (data.instruction !== TokenInstruction.SetAuthority) throw new TokenInvalidInstructionTypeError();
     if (!account || !currentAuthority) throw new TokenInvalidInstructionKeysError();
 
-    // TODO: key checks?
+    // Optional: further key validity checks.
 
     return {
         programId,

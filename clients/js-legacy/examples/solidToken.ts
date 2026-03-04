@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import fs from 'node:fs';
 import path from 'node:path';
 import { clusterApiUrl, Connection, Keypair, PublicKey, SystemProgram, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
@@ -21,19 +22,23 @@ import {
 import type { Account } from '../src';
 import { createInitializeInstruction, pack, type TokenMetadata } from '@solana/spl-token-metadata';
 
-const NAME = 'EASY';
-const SYMBOL = 'EASY';
+const NAME = 'SOLID';
+const SYMBOL = 'SOLID';
 const DECIMALS = 6;
-const TOTAL_SUPPLY = 21_000_000n * 10n ** BigInt(DECIMALS); // 21M with 6 decimal places
+const TOTAL_SUPPLY = 999_369n * 10n ** BigInt(DECIMALS);
 const TRANSFER_FEE_BPS = 200; // 2%
-const MAX_FEE = 420_000_000_000n; // 2% of total supply in base units
-const DEFAULT_METADATA_URI = 'https://example.com/easy.json';
+const MAX_FEE = (TOTAL_SUPPLY * 200n) / 10_000n; // 2% of total supply in base units
+const DEFAULT_METADATA_URI = 'https://example.com/solid.json';
 
 const RPC_URL = process.env.RPC_URL ?? clusterApiUrl('devnet');
 const KEYPAIR_PATH =
     process.env.KEYPAIR ??
     path.join(process.env.HOME ?? process.env.USERPROFILE ?? '.', '.config', 'solana', 'id.json');
-const METADATA_URI = process.env.EASY_METADATA_URI ?? DEFAULT_METADATA_URI;
+const METADATA_URI = process.env.SOLID_METADATA_URI ?? DEFAULT_METADATA_URI;
+
+/** Env var for mint keypair: base58 private key, or path to keypair JSON (vanity mint address). */
+const MINT_KEYPAIR_ENV = 'SOLID_MINT_PRIVATE_KEY_BASE58';
+const MINT_KEYPAIR_PATH_ENV = 'SOLID_MINT_KEYPAIR';
 
 type Mode = 'create' | 'distribute';
 
@@ -46,6 +51,20 @@ function loadKeypair(): Keypair {
     return Keypair.fromSecretKey(Uint8Array.from(secret));
 }
 
+/** Load mint keypair from .env so the mint address is your pre-generated (e.g. vanity) address. */
+function loadMintKeypair(): Keypair {
+    const base58 = process.env[MINT_KEYPAIR_ENV];
+    if (base58?.trim()) {
+        return Keypair.fromSecretKey(bs58.decode(base58));
+    }
+    const keypairPath = process.env[MINT_KEYPAIR_PATH_ENV];
+    if (keypairPath?.trim()) {
+        const secret = JSON.parse(fs.readFileSync(path.resolve(keypairPath), 'utf8'));
+        return Keypair.fromSecretKey(Uint8Array.from(secret));
+    }
+    return Keypair.generate();
+}
+
 function chunk<T>(items: T[], size: number): T[][] {
     const result: T[][] = [];
     for (let i = 0; i < items.length; i += size) {
@@ -54,8 +73,8 @@ function chunk<T>(items: T[], size: number): T[][] {
     return result;
 }
 
-async function createEasyMint(connection: Connection, payer: Keypair) {
-    const mint = Keypair.generate();
+async function createSolidMint(connection: Connection, payer: Keypair) {
+    const mint = loadMintKeypair();
     const metadata: TokenMetadata = {
         mint: mint.publicKey,
         name: NAME,
@@ -72,7 +91,6 @@ async function createEasyMint(connection: Connection, payer: Keypair) {
         SystemProgram.createAccount({
             fromPubkey: payer.publicKey,
             newAccountPubkey: mint.publicKey,
-            // Allocate base mint + extension data; metadata instruction will reallocate using the prepaid lamports
             space: mintLen,
             lamports: rent,
             programId: TOKEN_2022_PROGRAM_ID,
@@ -233,8 +251,11 @@ async function main() {
     const payer = loadKeypair();
 
     if (mode === 'create') {
-        const { mint, treasury } = await createEasyMint(connection, payer);
-        console.log('EASY mint:', mint.toBase58());
+        const { mint, treasury } = await createSolidMint(connection, payer);
+        console.log('SOLID mint:', mint.toBase58());
+        if (process.env[MINT_KEYPAIR_ENV] || process.env[MINT_KEYPAIR_PATH_ENV]) {
+            console.log('(Mint address from pre-generated keypair in .env)');
+        }
         console.log('Treasury ATA:', treasury.address.toBase58());
         console.log('Decimals:', DECIMALS);
         console.log('Transfer fee: 2% (200 bps), max fee', MAX_FEE.toString());

@@ -10,13 +10,13 @@ import {
 } from '../errors.js';
 import { TokenInstruction } from './types.js';
 
-/** TODO: docs */
+/** Instruction data for UiAmountToAmount (read-only). */
 export interface UiAmountToAmountInstructionData {
     instruction: TokenInstruction.UiAmountToAmount;
     amount: Uint8Array;
 }
 
-/** TODO: docs */
+/** Layout for UiAmountToAmount instruction data. */
 
 /**
  * Construct a UiAmountToAmount instruction

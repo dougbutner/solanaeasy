@@ -11,13 +11,13 @@ export enum MemoTransferInstruction {
     Disable = 1,
 }
 
-/** TODO: docs */
+/** Instruction data for Memo Transfer extension. */
 export interface MemoTransferInstructionData {
     instruction: TokenInstruction.MemoTransferExtension;
     memoTransferInstruction: MemoTransferInstruction;
 }
 
-/** TODO: docs */
+/** Layout for Memo Transfer extension instruction data. */
 export const memoTransferInstructionData = struct<MemoTransferInstructionData>([
     u8('instruction'),
     u8('memoTransferInstruction'),

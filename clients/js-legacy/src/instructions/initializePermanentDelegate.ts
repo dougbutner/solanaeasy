@@ -13,13 +13,13 @@ import {
 } from '../errors.js';
 import { TokenInstruction } from './types.js';
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export interface InitializePermanentDelegateInstructionData {
     instruction: TokenInstruction.InitializePermanentDelegate;
     delegate: PublicKey;
 }
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export const initializePermanentDelegateInstructionData = struct<InitializePermanentDelegateInstructionData>([
     u8('instruction'),
     publicKey('delegate'),

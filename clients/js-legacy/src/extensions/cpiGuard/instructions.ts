@@ -11,13 +11,13 @@ export enum CpiGuardInstruction {
     Disable = 1,
 }
 
-/** TODO: docs */
+/** Instruction data for CPI Guard extension. */
 export interface CpiGuardInstructionData {
     instruction: TokenInstruction.CpiGuardExtension;
     cpiGuardInstruction: CpiGuardInstruction;
 }
 
-/** TODO: docs */
+/** Layout for CPI Guard extension instruction data. */
 export const cpiGuardInstructionData = struct<CpiGuardInstructionData>([u8('instruction'), u8('cpiGuardInstruction')]);
 
 /**

@@ -10,12 +10,12 @@ import {
 } from '../errors.js';
 import { TokenInstruction } from './types.js';
 
-/** TODO: docs */
+/** Instruction data for SyncNative. */
 export interface SyncNativeInstructionData {
     instruction: TokenInstruction.SyncNative;
 }
 
-/** TODO: docs */
+/** Layout for SyncNative instruction data. */
 export const syncNativeInstructionData = struct<SyncNativeInstructionData>([u8('instruction')]);
 
 /**
@@ -68,7 +68,7 @@ export function decodeSyncNativeInstruction(
     if (data.instruction !== TokenInstruction.SyncNative) throw new TokenInvalidInstructionTypeError();
     if (!account) throw new TokenInvalidInstructionKeysError();
 
-    // TODO: key checks?
+    // Optional: further key validity checks.
 
     return {
         programId,

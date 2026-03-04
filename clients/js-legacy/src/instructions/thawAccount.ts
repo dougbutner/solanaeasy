@@ -11,12 +11,12 @@ import {
 import { addSigners } from './internal.js';
 import { TokenInstruction } from './types.js';
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export interface ThawAccountInstructionData {
     instruction: TokenInstruction.ThawAccount;
 }
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export const thawAccountInstructionData = struct<ThawAccountInstructionData>([u8('instruction')]);
 
 /**
@@ -88,7 +88,7 @@ export function decodeThawAccountInstruction(
     if (data.instruction !== TokenInstruction.ThawAccount) throw new TokenInvalidInstructionTypeError();
     if (!account || !mint || !authority) throw new TokenInvalidInstructionKeysError();
 
-    // TODO: key checks?
+    // Optional: further key validity checks.
 
     return {
         programId,

@@ -12,14 +12,14 @@ import {
 import { addSigners } from './internal.js';
 import { TokenInstruction } from './types.js';
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export interface BurnCheckedInstructionData {
     instruction: TokenInstruction.BurnChecked;
     amount: bigint;
     decimals: number;
 }
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export const burnCheckedInstructionData = struct<BurnCheckedInstructionData>([
     u8('instruction'),
     u64('amount'),
@@ -108,7 +108,7 @@ export function decodeBurnCheckedInstruction(
     if (data.instruction !== TokenInstruction.BurnChecked) throw new TokenInvalidInstructionTypeError();
     if (!account || !mint || !owner) throw new TokenInvalidInstructionKeysError();
 
-    // TODO: key checks?
+    // Optional: further key validity checks.
 
     return {
         programId,

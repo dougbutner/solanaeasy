@@ -27,7 +27,7 @@ export interface InterestBearingMintUpdateRateInstructionData {
 export const interestBearingMintInitializeInstructionData = struct<InterestBearingMintInitializeInstructionData>([
     u8('instruction'),
     u8('interestBearingMintInstruction'),
-    // TODO: Make this an optional public key
+    // Rate authority: could be optional in a future layout variant.
     publicKey('rateAuthority'),
     s16('rate'),
 ]);

@@ -11,12 +11,12 @@ import {
 import { addSigners } from './internal.js';
 import { TokenInstruction } from './types.js';
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export interface RevokeInstructionData {
     instruction: TokenInstruction.Revoke;
 }
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export const revokeInstructionData = struct<RevokeInstructionData>([u8('instruction')]);
 
 /**
@@ -78,7 +78,7 @@ export function decodeRevokeInstruction(
     if (data.instruction !== TokenInstruction.Revoke) throw new TokenInvalidInstructionTypeError();
     if (!account || !owner) throw new TokenInvalidInstructionKeysError();
 
-    // TODO: key checks?
+    // Optional: further key validity checks.
 
     return {
         programId,

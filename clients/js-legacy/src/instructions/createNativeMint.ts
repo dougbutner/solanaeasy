@@ -5,12 +5,12 @@ import { NATIVE_MINT_2022, programSupportsExtensions, TOKEN_2022_PROGRAM_ID } fr
 import { TokenUnsupportedInstructionError } from '../errors.js';
 import { TokenInstruction } from './types.js';
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export interface CreateNativeMintInstructionData {
     instruction: TokenInstruction.CreateNativeMint;
 }
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export const createNativeMintInstructionData = struct<CreateNativeMintInstructionData>([u8('instruction')]);
 
 /**

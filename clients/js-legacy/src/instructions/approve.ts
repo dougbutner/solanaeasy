@@ -12,13 +12,13 @@ import {
 import { addSigners } from './internal.js';
 import { TokenInstruction } from './types.js';
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export interface ApproveInstructionData {
     instruction: TokenInstruction.Approve;
     amount: bigint;
 }
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export const approveInstructionData = struct<ApproveInstructionData>([u8('instruction'), u64('amount')]);
 
 /**
@@ -99,7 +99,7 @@ export function decodeApproveInstruction(
     if (data.instruction !== TokenInstruction.Approve) throw new TokenInvalidInstructionTypeError();
     if (!account || !delegate || !owner) throw new TokenInvalidInstructionKeysError();
 
-    // TODO: key checks?
+    // Optional: further key validity checks.
 
     return {
         programId,

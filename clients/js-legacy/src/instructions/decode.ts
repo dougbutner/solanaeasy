@@ -48,7 +48,7 @@ import { TokenInstruction } from './types.js';
 import type { DecodedUiAmountToAmountInstruction } from './uiAmountToAmount.js';
 import { decodeUiAmountToAmountInstruction } from './uiAmountToAmount.js';
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export type DecodedInstruction =
     | DecodedInitializeMintInstruction
     | DecodedInitializeAccountInstruction
@@ -72,11 +72,10 @@ export type DecodedInstruction =
     | DecodedInitializeMint2Instruction
     | DecodedAmountToUiAmountInstruction
     | DecodedUiAmountToAmountInstruction
-    // | DecodedInitializeMultisig2Instruction
-    // TODO: implement ^ and remove `never`
+    // | DecodedInitializeMultisig2Instruction (not yet implemented)
     | never;
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function decodeInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID,
@@ -109,139 +108,138 @@ export function decodeInstruction(
     if (type === TokenInstruction.InitializeMint2) return decodeInitializeMint2Instruction(instruction, programId);
     if (type === TokenInstruction.AmountToUiAmount) return decodeAmountToUiAmountInstruction(instruction, programId);
     if (type === TokenInstruction.UiAmountToAmount) return decodeUiAmountToAmountInstruction(instruction, programId);
-    // TODO: implement
-    if (type === TokenInstruction.InitializeMultisig2) throw new TokenInvalidInstructionTypeError();
+    if (type === TokenInstruction.InitializeMultisig2) throw new TokenInvalidInstructionTypeError(); // Decoder not yet implemented
 
     throw new TokenInvalidInstructionTypeError();
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isInitializeMintInstruction(decoded: DecodedInstruction): decoded is DecodedInitializeMintInstruction {
     return decoded.data.instruction === TokenInstruction.InitializeMint;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isInitializeAccountInstruction(
     decoded: DecodedInstruction,
 ): decoded is DecodedInitializeAccountInstruction {
     return decoded.data.instruction === TokenInstruction.InitializeAccount;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isInitializeMultisigInstruction(
     decoded: DecodedInstruction,
 ): decoded is DecodedInitializeMultisigInstruction {
     return decoded.data.instruction === TokenInstruction.InitializeMultisig;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isTransferInstruction(decoded: DecodedInstruction): decoded is DecodedTransferInstruction {
     return decoded.data.instruction === TokenInstruction.Transfer;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isApproveInstruction(decoded: DecodedInstruction): decoded is DecodedApproveInstruction {
     return decoded.data.instruction === TokenInstruction.Approve;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isRevokeInstruction(decoded: DecodedInstruction): decoded is DecodedRevokeInstruction {
     return decoded.data.instruction === TokenInstruction.Revoke;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isSetAuthorityInstruction(decoded: DecodedInstruction): decoded is DecodedSetAuthorityInstruction {
     return decoded.data.instruction === TokenInstruction.SetAuthority;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isMintToInstruction(decoded: DecodedInstruction): decoded is DecodedMintToInstruction {
     return decoded.data.instruction === TokenInstruction.MintTo;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isBurnInstruction(decoded: DecodedInstruction): decoded is DecodedBurnInstruction {
     return decoded.data.instruction === TokenInstruction.Burn;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isCloseAccountInstruction(decoded: DecodedInstruction): decoded is DecodedCloseAccountInstruction {
     return decoded.data.instruction === TokenInstruction.CloseAccount;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isFreezeAccountInstruction(decoded: DecodedInstruction): decoded is DecodedFreezeAccountInstruction {
     return decoded.data.instruction === TokenInstruction.FreezeAccount;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isThawAccountInstruction(decoded: DecodedInstruction): decoded is DecodedThawAccountInstruction {
     return decoded.data.instruction === TokenInstruction.ThawAccount;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isTransferCheckedInstruction(
     decoded: DecodedInstruction,
 ): decoded is DecodedTransferCheckedInstruction {
     return decoded.data.instruction === TokenInstruction.TransferChecked;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isApproveCheckedInstruction(decoded: DecodedInstruction): decoded is DecodedApproveCheckedInstruction {
     return decoded.data.instruction === TokenInstruction.ApproveChecked;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isMintToCheckedInstruction(decoded: DecodedInstruction): decoded is DecodedMintToCheckedInstruction {
     return decoded.data.instruction === TokenInstruction.MintToChecked;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isBurnCheckedInstruction(decoded: DecodedInstruction): decoded is DecodedBurnCheckedInstruction {
     return decoded.data.instruction === TokenInstruction.BurnChecked;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isInitializeAccount2Instruction(
     decoded: DecodedInstruction,
 ): decoded is DecodedInitializeAccount2Instruction {
     return decoded.data.instruction === TokenInstruction.InitializeAccount2;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isSyncNativeInstruction(decoded: DecodedInstruction): decoded is DecodedSyncNativeInstruction {
     return decoded.data.instruction === TokenInstruction.SyncNative;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isInitializeAccount3Instruction(
     decoded: DecodedInstruction,
 ): decoded is DecodedInitializeAccount3Instruction {
     return decoded.data.instruction === TokenInstruction.InitializeAccount3;
 }
 
-/** TODO: docs, implement */
+/** Type guard for InitializeMultisig2 (decoder not yet implemented). */
 // export function isInitializeMultisig2Instruction(
 //     decoded: DecodedInstruction
 // ): decoded is DecodedInitializeMultisig2Instruction {
 //     return decoded.data.instruction === TokenInstruction.InitializeMultisig2;
 // }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isInitializeMint2Instruction(
     decoded: DecodedInstruction,
 ): decoded is DecodedInitializeMint2Instruction {
     return decoded.data.instruction === TokenInstruction.InitializeMint2;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isAmountToUiAmountInstruction(
     decoded: DecodedInstruction,
 ): decoded is DecodedAmountToUiAmountInstruction {
     return decoded.data.instruction === TokenInstruction.AmountToUiAmount;
 }
 
-/** TODO: docs */
+/** Decoded SPL Token instruction (see program IDL). */
 export function isUiamountToAmountInstruction(
     decoded: DecodedInstruction,
 ): decoded is DecodedUiAmountToAmountInstruction {

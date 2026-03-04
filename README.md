@@ -5,6 +5,8 @@
 <a href="https://www.npmjs.com/package/@solana-program/token-2022"><img src="https://img.shields.io/npm/v/%40solana-program%2Ftoken-2022?logo=npm&color=377CC0" /></a>
 <a href="https://crates.io/crates/spl-token-2022-client"><img src="https://img.shields.io/crates/v/spl-token-2022-client?logo=rust" /></a>
 
+See **[FEATURES.md](FEATURES.md)** for program capabilities, client coverage, and documented flows (QUICK/SOLID/SOLOMON).
+
 ## Programs
 
 The token-2022 repo contains two on-chain programs, the token-2022 program in

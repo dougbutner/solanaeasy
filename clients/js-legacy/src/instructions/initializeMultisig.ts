@@ -11,13 +11,13 @@ import {
 import { addSigners } from './internal.js';
 import { TokenInstruction } from './types.js';
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export interface InitializeMultisigInstructionData {
     instruction: TokenInstruction.InitializeMultisig;
     m: number;
 }
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export const initializeMultisigInstructionData = struct<InitializeMultisigInstructionData>([
     u8('instruction'),
     u8('m'),
@@ -100,7 +100,7 @@ export function decodeInitializeMultisigInstruction(
     if (data.instruction !== TokenInstruction.InitializeMultisig) throw new TokenInvalidInstructionTypeError();
     if (!account || !rent || !signers.length) throw new TokenInvalidInstructionKeysError();
 
-    // TODO: key checks?
+    // Optional: further key validity checks.
 
     return {
         programId,

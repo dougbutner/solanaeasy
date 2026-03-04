@@ -12,13 +12,13 @@ import {
 import { addSigners } from './internal.js';
 import { TokenInstruction } from './types.js';
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export interface TransferInstructionData {
     instruction: TokenInstruction.Transfer;
     amount: bigint;
 }
 
-/** TODO: docs */
+/** SPL Token instruction data or layout (see program IDL). */
 export const transferInstructionData = struct<TransferInstructionData>([u8('instruction'), u64('amount')]);
 
 /**
@@ -99,7 +99,7 @@ export function decodeTransferInstruction(
     if (data.instruction !== TokenInstruction.Transfer) throw new TokenInvalidInstructionTypeError();
     if (!source || !destination || !owner) throw new TokenInvalidInstructionKeysError();
 
-    // TODO: key checks?
+    // Optional: further key validity checks.
 
     return {
         programId,
