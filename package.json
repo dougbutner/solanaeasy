@@ -1,7 +1,9 @@
 {
   "private": true,
   "scripts": {
-    "generate:clients": "zx ./scripts/generate-clients.mjs"
+    "generate:clients": "zx ./scripts/generate-clients.mjs",
+    "validate-env": "node scripts/validate-env.mjs",
+    "validate-layerzero-deployments": "node scripts/validate-layerzero-deployments.mjs"
   },
   "devDependencies": {
     "@codama/renderers-js": "^1.4.3",

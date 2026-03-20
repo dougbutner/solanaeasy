@@ -1,4 +1,4 @@
-// Quick script to show metadata and hosting options for QUICK, SOLID, SOLOMON
+// Quick script to show metadata and hosting options for QUICK, SOLID, SOLOMON, GAINE
 const fs = require('fs');
 const path = require('path');
 
@@ -34,5 +34,5 @@ console.log('   → Sign up (free)');
 console.log('   → Upload metadata.json');
 console.log('   → Get IPFS URL');
 console.log('');
-console.log('Once you have the URL, set QUICK_METADATA_URI, SOLID_METADATA_URI, or SOLOMON_METADATA_URI in .env');
-console.log('Usage: node upload-to-ipfs.js [metadata-quick.json|metadata-solid.json|metadata-solomon.json]');
+console.log('Once you have the URL, set QUICK_METADATA_URI, SOLID_METADATA_URI, SOLOMON_METADATA_URI, or GAINE_METADATA_URI in .env');
+console.log('Usage: node upload-to-ipfs.js [metadata-quick.json|metadata-solid.json|metadata-solomon.json|metadata-gain.json]');

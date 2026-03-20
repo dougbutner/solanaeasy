@@ -1,6 +1,6 @@
-# Token minting: QUICK, SOLID, SOLOMON
+# Token minting: QUICK, SOLID, SOLOMON, GAINE
 
-This repo mints three Token-2022 tokens: **QUICK**, **SOLID**, and **SOLOMON**. Each uses:
+This repo mints four Token-2022 tokens: **QUICK**, **SOLID**, **SOLOMON**, and **GAINE**. Each uses:
 
 - **Supply:** 999,369 tokens (999,369 × 10^6 base units)
 - **Decimals:** 6
@@ -23,12 +23,15 @@ Set in `clients/js-legacy/.env` (or env when running):
 | `QUICK_METADATA_URI` | Yes for QUICK | Public URL to QUICK metadata JSON |
 | `SOLID_METADATA_URI` | Yes for SOLID | Public URL to SOLID metadata JSON |
 | `SOLOMON_METADATA_URI` | Yes for SOLOMON | Public URL to SOLOMON metadata JSON |
+| `GAINE_METADATA_URI` | Yes for GAINE | Public URL to GAINE metadata JSON |
 | `QUICK_MINT_PRIVATE_KEY_BASE58` | Optional | Base58 mint keypair → mint address = that pubkey |
 | `QUICK_MINT_KEYPAIR` | Optional | Path to mint keypair JSON (alternative to above) |
 | `SOLID_MINT_PRIVATE_KEY_BASE58` | Optional | Same for SOLID |
 | `SOLID_MINT_KEYPAIR` | Optional | Same for SOLID |
 | `SOLOMON_MINT_PRIVATE_KEY_BASE58` | Optional | Same for SOLOMON |
 | `SOLOMON_MINT_KEYPAIR` | Optional | Same for SOLOMON |
+| `GAINE_MINT_PRIVATE_KEY_BASE58` | Optional | Same for GAINE |
+| `GAINE_MINT_KEYPAIR` | Optional | Same for GAINE |
 
 ---
 
@@ -55,6 +58,13 @@ npx tsx examples/solidToken.ts
 MINT=<SOLID mint address> npx tsx examples/solidToken.ts distribute
 ```
 
+**GAINE**
+```bash
+# Set GAINE_METADATA_URI in .env (and optionally GAINE_MINT_*)
+npx tsx examples/gainToken.ts
+MINT=<GAINE mint address> npx tsx examples/gainToken.ts distribute
+```
+
 **SOLOMON**
 ```bash
 # Set SOLOMON_METADATA_URI in .env (and optionally SOLOMON_MINT_*)
@@ -73,13 +83,13 @@ By default the script creates a new random keypair for the mint. To use a fixed/
 - Set **`<TOKEN>_MINT_PRIVATE_KEY_BASE58`** to the base58 secret of the mint keypair, or  
 - Set **`<TOKEN>_MINT_KEYPAIR`** to the path to the mint keypair JSON (e.g. from `solana-keygen grind`).
 
-The mint account is created at that keypair’s **public key**. Replace `<TOKEN>` with `QUICK`, `SOLID`, or `SOLOMON`.
+The mint account is created at that keypair’s **public key**. Replace `<TOKEN>` with `QUICK`, `SOLID`, `SOLOMON`, or `GAINE`.
 
 ---
 
 ## Metadata files and updates
 
-- **Templates:** `metadata-quick.json`, `metadata-solid.json`, `metadata-solomon.json` in `clients/js-legacy/`. Edit, host (e.g. GitHub, IPFS), and set the corresponding `*_METADATA_URI` in `.env`.
+- **Templates:** `metadata-quick.json`, `metadata-solid.json`, `metadata-solomon.json`, `metadata-gain.json` in `clients/js-legacy/`. Edit, host (e.g. GitHub, IPFS), and set the corresponding `*_METADATA_URI` in `.env`.
 - **Update metadata after mint:** Use `updateTokenMetadata.ts`. Payer must be the **update authority** of the mint.
 
 ```bash
@@ -102,9 +112,11 @@ Allowed fields: `name`, `symbol`, `uri`.
 |--------|------|
 | Mint QUICK | `clients/js-legacy/examples/quickToken.ts` |
 | Mint SOLID | `clients/js-legacy/examples/solidToken.ts` |
+| Mint GAINE | `clients/js-legacy/examples/gainToken.ts` |
 | Mint SOLOMON | `clients/js-legacy/examples/solomonToken.ts` |
 | QUICK metadata template | `clients/js-legacy/metadata-quick.json` |
 | SOLID metadata template | `clients/js-legacy/metadata-solid.json` |
+| GAINE metadata template | `clients/js-legacy/metadata-gain.json` |
 | SOLOMON metadata template | `clients/js-legacy/metadata-solomon.json` |
 | Update any token metadata | `clients/js-legacy/examples/updateTokenMetadata.ts` |
 | Env / config | `clients/js-legacy/.env` |
