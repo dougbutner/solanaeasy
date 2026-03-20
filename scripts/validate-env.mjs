@@ -4,6 +4,9 @@
  * Exits with code 1 and lists missing vars if any required env is missing.
  * Usage: node scripts/validate-env.mjs [path-to-.env]
  * Default .env: clients/js-legacy/.env
+ *
+ * Optional: --tokens=GAINE or --tokens=QUICK,GAINE — validate only those mint keys
+ * (for Solana-only mint before LayerZero / full quartet).
  */
 
 import { readFileSync, existsSync } from 'node:fs';
@@ -21,6 +24,24 @@ const tokenEnvVars = [
   { token: 'GAINE', base58: 'GAINE_MINT_PRIVATE_KEY_BASE58', keypair: 'GAINE_MINT_KEYPAIR' },
 ];
 
+const ALLOWED = new Set(tokenEnvVars.map((t) => t.token));
+
+function parseTokensFilter(argv) {
+  const raw = argv.find((a) => a.startsWith('--tokens='));
+  if (!raw) return null;
+  const list = raw
+    .slice('--tokens='.length)
+    .split(',')
+    .map((s) => s.trim().toUpperCase())
+    .filter(Boolean);
+  const bad = list.filter((t) => !ALLOWED.has(t));
+  if (bad.length) {
+    console.error(`Unknown token(s) in --tokens=: ${bad.join(', ')}. Allowed: ${[...ALLOWED].join(', ')}`);
+    process.exit(1);
+  }
+  return new Set(list);
+}
+
 function loadEnv(path) {
   const env = {};
   if (!existsSync(path)) return env;
@@ -32,11 +53,17 @@ function loadEnv(path) {
   return env;
 }
 
-function validate(envPath = defaultEnvPath) {
+const tokensFilter = parseTokensFilter(process.argv);
+const positional = process.argv.slice(2).filter((a) => !a.startsWith('--'));
+const envPath = positional[0] ? resolve(process.cwd(), positional[0]) : defaultEnvPath;
+const toCheck = tokensFilter
+  ? tokenEnvVars.filter((t) => tokensFilter.has(t.token))
+  : tokenEnvVars;
+
+function validateSubset(envPath, subset) {
   const env = { ...process.env, ...loadEnv(envPath) };
   const missing = [];
-
-  for (const { token, base58, keypair } of tokenEnvVars) {
+  for (const { token, base58, keypair } of subset) {
     const hasBase58 = env[base58] && String(env[base58]).length > 0;
     const keypairPath = env[keypair];
     const hasKeypair =
@@ -48,20 +75,24 @@ function validate(envPath = defaultEnvPath) {
       missing.push(`  - ${token}: set either ${base58} or ${keypair} (and ensure file exists)`);
     }
   }
-
   return missing;
 }
 
-const envPath = process.argv[2] ? resolve(process.cwd(), process.argv[2]) : defaultEnvPath;
-const missing = validate(envPath);
+const missing = validateSubset(envPath, toCheck);
 
 if (missing.length > 0) {
-  console.error('LayerZero / mint deploy requires vanity mint keys for QUICK, SOLID, SOLOMON, and GAINE.');
+  const scope = tokensFilter ? [...tokensFilter].sort().join(', ') : 'QUICK, SOLID, SOLOMON, and GAINE';
+  console.error(
+    tokensFilter
+      ? `Missing vanity mint keys for: ${scope}.`
+      : 'LayerZero / full mint deploy requires vanity mint keys for QUICK, SOLID, SOLOMON, and GAINE.',
+  );
   console.error('Missing or invalid env (check ' + envPath + '):');
   missing.forEach((m) => console.error(m));
-  console.error('\nDeploy is blocked until these are set. See DEPLOY.md and LAYERZERO_DEPLOY.md.');
+  console.error('\nSee DEPLOY.md and LAYERZERO_DEPLOY.md.');
   process.exit(1);
 }
 
-console.log('Env validation passed: QUICK, SOLID, SOLOMON, GAINE mint keys are set.');
+const okLabel = tokensFilter ? [...tokensFilter].sort().join(', ') : 'QUICK, SOLID, SOLOMON, GAINE';
+console.log(`Env validation passed: mint keys set for ${okLabel}.`);
 process.exit(0);

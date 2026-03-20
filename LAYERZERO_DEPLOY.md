@@ -14,6 +14,19 @@ This doc covers **cross-chain OFT deployment and operations**. For **minting** t
   - `layerzero/deployments/solana-testnet/OFT-SOLOMON.json`
   - `layerzero/deployments/solana-testnet/OFT-GAINE.json`
 - **Vanity mints required:** All four Solana mints must come from pre-generated keypairs set in `.env` (see [DEPLOY.md](DEPLOY.md) and env validation below).
+- **EVM:** Four `MyOFT` deployments per network (`MyOFT_QUICK`, `MyOFT_SOLID`, `MyOFT_SOLOMON`, `MyOFT_GAINE`) via `layerzero/deploy/MyOFT.ts`, each wired 1:1 to the matching Solana OFT Store in `layerzero.config.ts`.
+
+### EVM vanity (CREATE2)
+
+LayerZero does not care how the OFT contract address was chosen. To land each EVM OFT at a **specific** address, `hardhat-deploy` uses CREATE2 when you set optional env vars in `layerzero/.env`:
+
+- `QUICK_OFT_CREATE2_SALT`, `SOLID_OFT_CREATE2_SALT`, `SOLOMON_OFT_CREATE2_SALT`, `GAINE_OFT_CREATE2_SALT` — each `0x` + **64** hex characters (32 bytes).
+
+**Not the same as an EOA vanity:** grinding a wallet key does **not** set where `MyOFT` deploys under normal `CREATE`. Salts must be mined for **this** contract’s init code (Solidity 0.8.22, optimizer 200 runs in `hardhat.config.ts`), **token-specific** `name`/`symbol` args, the live **EndpointV2** address, and **delegate** (`deployer`), using the CREATE2 formula that **hardhat-deploy** uses (its deterministic deployer). If you change any of that or recompile differently, previously mined salts are invalid.
+
+If these vars are **unset**, deploy still creates all four OFTs using ordinary CREATE (addresses are not vanity).
+
+**Sending from EVM** when multiple OFTs share the same chain: pass `--oft-address` to `lz:oft:send` with the `MyOFT_*` contract address you intend to use.
 
 ---
 
@@ -83,6 +96,12 @@ Example mainnet EIDs (confirm from API):
 ## Commands (layerzero workspace)
 
 Run from `layerzero/` unless noted.
+
+- **Deploy EVM OFTs (four contracts)** after EndpointV2 is available (e.g. via `pnpm hardhat lz:deploy` flow or your network’s LZ setup):
+  ```bash
+  npx hardhat deploy --network arbitrum-sepolia --tags MyOFT
+  ```
+  This deploys `MyOFT_QUICK`, `MyOFT_SOLID`, `MyOFT_SOLOMON`, and `MyOFT_GAINE`. Optional CREATE2 salts: set `*_OFT_CREATE2_SALT` in `layerzero/.env` (see § EVM vanity above).
 
 - **Create OFT Adapter (Mint-And-Burn) for an existing mint** – one OFT Store per token, saves to `OFT-<NAME>.json`:
   ```bash

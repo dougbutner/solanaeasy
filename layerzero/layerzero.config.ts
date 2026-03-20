@@ -5,14 +5,26 @@ import { OAppEnforcedOption, OmniPointHardhat } from '@layerzerolabs/toolbox-har
 
 import { getOftStoreAddress } from './tasks/solana'
 
-// Note:  Do not use address for EVM OmniPointHardhat contracts.  Contracts are loaded using hardhat-deploy.
-// If you do use an address, ensure artifacts exists.
-const arbitrumContract: OmniPointHardhat = {
+// Note: Do not use address for EVM OmniPointHardhat contracts. Contracts are loaded using hardhat-deploy.
+// Deploy names match layerzero/deploy/MyOFT.ts (CREATE2 optional via *_OFT_CREATE2_SALT in .env).
+const evmQUICK: OmniPointHardhat = {
     eid: EndpointId.ARBSEP_V2_TESTNET,
-    contractName: 'MyOFT', // Note: change this to your production contract name
+    contractName: 'MyOFT_QUICK',
+}
+const evmSOLID: OmniPointHardhat = {
+    eid: EndpointId.ARBSEP_V2_TESTNET,
+    contractName: 'MyOFT_SOLID',
+}
+const evmSOLOMON: OmniPointHardhat = {
+    eid: EndpointId.ARBSEP_V2_TESTNET,
+    contractName: 'MyOFT_SOLOMON',
+}
+const evmGAINE: OmniPointHardhat = {
+    eid: EndpointId.ARBSEP_V2_TESTNET,
+    contractName: 'MyOFT_GAINE',
 }
 
-// QUICK, SOLID, SOLOMON, GAINE: one OFT program, separate OFT Store per token (deployments: OFT-QUICK.json, OFT-SOLID.json, OFT-SOLOMON.json, OFT-GAINE.json)
+// QUICK, SOLID, SOLOMON, GAINE: one OFT program on Solana, separate OFT Store per token (OFT-QUICK.json, …)
 const solanaTestnetEid = EndpointId.SOLANA_V2_TESTNET
 const solanaQUICK: OmniPointHardhat = {
     eid: solanaTestnetEid,
@@ -30,11 +42,6 @@ const solanaGAINE: OmniPointHardhat = {
     eid: solanaTestnetEid,
     address: getOftStoreAddress(solanaTestnetEid, 'GAINE'),
 }
-// Legacy single-token reference (default OFT.json)
-const solanaContract: OmniPointHardhat = {
-    eid: solanaTestnetEid,
-    address: getOftStoreAddress(solanaTestnetEid),
-}
 
 const EVM_ENFORCED_OPTIONS: OAppEnforcedOption[] = [
     {
@@ -46,7 +53,7 @@ const EVM_ENFORCED_OPTIONS: OAppEnforcedOption[] = [
 ]
 
 const CU_LIMIT = 200000 // This represents the CU limit for executing the `lz_receive` function on Solana.
-const SPL_TOKEN_ACCOUNT_RENT_VALUE = 2039280 // This figure represents lamports (https://solana.com/docs/references/terminology#lamport) on Solana. Read below for more details.
+const SPL_TOKEN_ACCOUNT_RENT_VALUE = 2039280 // This figure represents lamports (https://solana.com/docs/references/terminology#lamport) on Solana.
 /*
  *  Elaboration on `value` when sending OFTs to Solana:
  *   When sending OFTs to Solana, SOL is needed for rent (https://solana.com/docs/core/accounts#rent) to initialize the recipient's token account.
@@ -67,31 +74,31 @@ const SOLANA_ENFORCED_OPTIONS: OAppEnforcedOption[] = [
 // Learn more about the Simple Config Generator - https://docs.layerzero.network/v2/developers/evm/technical-reference/simple-config
 export default async function () {
     // note: pathways declared here are automatically bidirectional
-    // QUICK, SOLID, SOLOMON, GAINE: one pathway per token (EVM <-> Solana OFT Store per token)
+    // One EVM OFT deployment per token, each wired to the matching Solana OFT Store
     const connections = await generateConnectionsConfig([
         [
-            arbitrumContract,
+            evmQUICK,
             solanaQUICK,
             [['LayerZero Labs'], []],
             [15, 32],
             [SOLANA_ENFORCED_OPTIONS, EVM_ENFORCED_OPTIONS],
         ],
         [
-            arbitrumContract,
+            evmSOLID,
             solanaSOLID,
             [['LayerZero Labs'], []],
             [15, 32],
             [SOLANA_ENFORCED_OPTIONS, EVM_ENFORCED_OPTIONS],
         ],
         [
-            arbitrumContract,
+            evmSOLOMON,
             solanaSOLOMON,
             [['LayerZero Labs'], []],
             [15, 32],
             [SOLANA_ENFORCED_OPTIONS, EVM_ENFORCED_OPTIONS],
         ],
         [
-            arbitrumContract,
+            evmGAINE,
             solanaGAINE,
             [['LayerZero Labs'], []],
             [15, 32],
@@ -101,7 +108,10 @@ export default async function () {
 
     return {
         contracts: [
-            { contract: arbitrumContract },
+            { contract: evmQUICK },
+            { contract: evmSOLID },
+            { contract: evmSOLOMON },
+            { contract: evmGAINE },
             { contract: solanaQUICK },
             { contract: solanaSOLID },
             { contract: solanaSOLOMON },

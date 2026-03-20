@@ -2,9 +2,18 @@ import assert from 'assert'
 
 import { type DeployFunction } from 'hardhat-deploy/types'
 
-const contractName = 'MyOFT'
+/** One OFT deployment per token; LayerZero wiring is 1:1 with Solana OFT-{TOKEN}.json stores. */
+const TOKENS = [
+    { deployment: 'MyOFT_QUICK', name: 'QUICK', symbol: 'QUICK', saltEnv: 'QUICK_OFT_CREATE2_SALT' },
+    { deployment: 'MyOFT_SOLID', name: 'SOLID', symbol: 'SOLID', saltEnv: 'SOLID_OFT_CREATE2_SALT' },
+    { deployment: 'MyOFT_SOLOMON', name: 'SOLOMON', symbol: 'SOLOMON', saltEnv: 'SOLOMON_OFT_CREATE2_SALT' },
+    { deployment: 'MyOFT_GAINE', name: 'GAINE', symbol: 'GAINE', saltEnv: 'GAINE_OFT_CREATE2_SALT' },
+] as const
 
-const deploy: DeployFunction = async (hre) => {
+/** 32-byte CREATE2 salt for hardhat-deploy (0x + 64 hex). */
+const CREATE2_SALT_RE = /^0x[0-9a-fA-F]{64}$/
+
+const deployFn: DeployFunction = async (hre) => {
     const { getNamedAccounts, deployments } = hre
 
     const { deploy } = deployments
@@ -15,39 +24,34 @@ const deploy: DeployFunction = async (hre) => {
     console.log(`Network: ${hre.network.name}`)
     console.log(`Deployer: ${deployer}`)
 
-    // This is an external deployment pulled in from @layerzerolabs/lz-evm-sdk-v2
-    //
-    // @layerzerolabs/toolbox-hardhat takes care of plugging in the external deployments
-    // from @layerzerolabs packages based on the configuration in your hardhat config
-    //
-    // For this to work correctly, your network config must define an eid property
-    // set to `EndpointId` as defined in @layerzerolabs/lz-definitions
-    //
-    // For example:
-    //
-    // networks: {
-    //   'arbitrum-sepolia': {
-    //     ...
-    //     eid: 40231 // Arbitrum Sepolia
-    //   }
-    // }
     const endpointV2Deployment = await hre.deployments.get('EndpointV2')
 
-    const { address } = await deploy(contractName, {
-        from: deployer,
-        args: [
-            'MyOFT', // name
-            'MOFT', // symbol
-            endpointV2Deployment.address, // LayerZero's EndpointV2 address
-            deployer, // owner
-        ],
-        log: true,
-        skipIfAlreadyDeployed: false,
-    })
+    for (const t of TOKENS) {
+        const rawSalt = process.env[t.saltEnv]?.trim()
+        const deterministicDeployment =
+            rawSalt && CREATE2_SALT_RE.test(rawSalt) ? rawSalt : false
 
-    console.log(`Deployed contract: ${contractName}, network: ${hre.network.name}, address: ${address}`)
+        if (deterministicDeployment) {
+            console.log(`${t.deployment}: CREATE2 (salt from ${t.saltEnv})`)
+        } else {
+            console.log(
+                `${t.deployment}: standard CREATE (optional vanity: set ${t.saltEnv}=0x<64 hex chars> for CREATE2)`
+            )
+        }
+
+        const { address } = await deploy(t.deployment, {
+            contract: 'MyOFT',
+            from: deployer,
+            args: [t.name, t.symbol, endpointV2Deployment.address, deployer],
+            log: true,
+            skipIfAlreadyDeployed: true,
+            ...(deterministicDeployment ? { deterministicDeployment } : {}),
+        })
+
+        console.log(`Deployed ${t.deployment} at ${address}`)
+    }
 }
 
-deploy.tags = [contractName]
+deployFn.tags = ['MyOFT']
 
-export default deploy
+export default deployFn

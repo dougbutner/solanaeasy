@@ -47,6 +47,11 @@ function loadKeypair(): Keypair {
     if (base58) {
         return Keypair.fromSecretKey(bs58.decode(base58));
     }
+    if (!fs.existsSync(KEYPAIR_PATH)) {
+        throw new Error(
+            `No payer key: set PRIVATE_KEY_BASE58 in clients/js-legacy/.env or KEYPAIR to a funded wallet JSON path (default was ${KEYPAIR_PATH}). See DEPLOY.md.`,
+        );
+    }
     const secret = JSON.parse(fs.readFileSync(KEYPAIR_PATH, 'utf8'));
     return Keypair.fromSecretKey(Uint8Array.from(secret));
 }

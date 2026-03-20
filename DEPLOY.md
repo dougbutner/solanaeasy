@@ -43,33 +43,58 @@ From `clients/js-legacy`:
 pnpm install
 ```
 
+Use **`pnpm run …Token`** from `clients/js-legacy` (uses local **`tsx`**). Do not use **`npx tsx`**: it uses a global cache and can pick the wrong `esbuild` binary.
+
+`package.json` sets **`pnpm.supportedArchitectures`** so optional packages (including `@esbuild/darwin-x64` and `@esbuild/darwin-arm64`) install for common OS/CPU pairs. After changing that or if you still see an esbuild platform error, run:
+
+```bash
+cd clients/js-legacy && rm -rf node_modules && pnpm install
+```
+
+on the same machine (and same Rosetta vs native) as the `node` you run. Align Terminal’s “Open using Rosetta” with how Node was installed ([nodejs.org](https://nodejs.org/) universal builds help).
+
 **QUICK**
 ```bash
 # Set QUICK_METADATA_URI in .env (and optionally QUICK_MINT_* for fixed mint address)
-npx tsx examples/quickToken.ts
+pnpm run quickToken
 # Distribute withheld fees later:
-MINT=<QUICK mint address> npx tsx examples/quickToken.ts distribute
+MINT=<QUICK mint address> pnpm run quickToken -- distribute
 ```
 
 **SOLID**
 ```bash
 # Set SOLID_METADATA_URI in .env (and optionally SOLID_MINT_*)
-npx tsx examples/solidToken.ts
-MINT=<SOLID mint address> npx tsx examples/solidToken.ts distribute
+pnpm run solidToken
+MINT=<SOLID mint address> pnpm run solidToken -- distribute
 ```
 
 **GAINE**
 ```bash
 # Set GAINE_METADATA_URI in .env (and optionally GAINE_MINT_*)
-npx tsx examples/gainToken.ts
-MINT=<GAINE mint address> npx tsx examples/gainToken.ts distribute
+pnpm run gainToken
+MINT=<GAINE mint address> pnpm run gainToken -- distribute
 ```
+
+### GAINE on Solana mainnet (checklist)
+
+1. **Metadata** — Host `metadata-gain.json` (or your final JSON) at a stable HTTPS URL; set `GAINE_METADATA_URI` in `clients/js-legacy/.env`.
+2. **Vanity mint** — Set `GAINE_MINT_PRIVATE_KEY_BASE58` or `GAINE_MINT_KEYPAIR` so the mint pubkey matches your planned address (see [LAYERZERO_PROGRESS.md](LAYERZERO_PROGRESS.md)).
+3. **Payer** — Set `PRIVATE_KEY_BASE58` **or** `KEYPAIR` to a funded mainnet wallet (fees + rent for mint + mint transaction).
+4. **RPC** — Set `RPC_URL=https://api.mainnet-beta.solana.com` (or your provider) for the run, or put it in `.env`.
+5. **Preflight** — From repo root, optional mint-key-only check before LayerZero quartet:  
+   `node scripts/validate-env.mjs --tokens=GAINE`
+6. **Create mint + mint full supply** — From `clients/js-legacy`:  
+   `pnpm run gainToken`  
+   Save the printed **Mint** and **Treasury ATA**.
+7. **Verify on-chain** (before other chains):  
+   `pnpm run verifyGaineMint -- <MINT_PUBKEY>`  
+   with the same `RPC_URL`. Expect decimals `6`, supply `999369000000`, transfer fee `200` bps.
 
 **SOLOMON**
 ```bash
 # Set SOLOMON_METADATA_URI in .env (and optionally SOLOMON_MINT_*)
-npx tsx examples/solomonToken.ts
-MINT=<SOLOMON mint address> npx tsx examples/solomonToken.ts distribute
+pnpm run solomonToken
+MINT=<SOLOMON mint address> pnpm run solomonToken -- distribute
 ```
 
 Each script prints **Mint** and **Treasury ATA**. Save the mint addresses.
@@ -95,11 +120,11 @@ The mint account is created at that keypair’s **public key**. Replace `<TOKEN>
 ```bash
 cd clients/js-legacy
 # Update URI
-MINT=<mint address> FIELD=uri VALUE=https://example.com/new-metadata.json npx tsx examples/updateTokenMetadata.ts
+MINT=<mint address> FIELD=uri VALUE=https://example.com/new-metadata.json pnpm exec tsx examples/updateTokenMetadata.ts
 # Or with args
-npx tsx examples/updateTokenMetadata.ts <MINT_ADDRESS> uri https://new-url.com/metadata.json
-npx tsx examples/updateTokenMetadata.ts <MINT_ADDRESS> name "New Name"
-npx tsx examples/updateTokenMetadata.ts <MINT_ADDRESS> symbol NEW
+pnpm exec tsx examples/updateTokenMetadata.ts <MINT_ADDRESS> uri https://new-url.com/metadata.json
+pnpm exec tsx examples/updateTokenMetadata.ts <MINT_ADDRESS> name "New Name"
+pnpm exec tsx examples/updateTokenMetadata.ts <MINT_ADDRESS> symbol NEW
 ```
 
 Allowed fields: `name`, `symbol`, `uri`.

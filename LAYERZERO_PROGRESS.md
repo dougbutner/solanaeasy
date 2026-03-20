@@ -12,10 +12,12 @@ Reference: [LayerZero Solana OFT overview](https://docs.layerzero.network/v2/dev
 |--------|----------------------|---------------------------|----------------------------|--------|
 | **QUICK** | _set in .env_       | —                         | `QUICK_MINT_PRIVATE_KEY_BASE58` or `QUICK_MINT_KEYPAIR` | Not deployed |
 | **SOLID** | _set in .env_       | —                         | `SOLID_MINT_PRIVATE_KEY_BASE58` or `SOLID_MINT_KEYPAIR` | Not deployed |
-| **GAINE** | _set in .env_       | —                         | `GAINE_MINT_PRIVATE_KEY_BASE58` or `GAINE_MINT_KEYPAIR` | Not deployed |
+| **GAINE** | `ibozy4AxS6TdsBDerGJN1ZKFFohEubFdHWGcyLxPLFL` | `0x1b06a63d03003ede6554449345b78edb79580545` | `GAINE_MINT_PRIVATE_KEY_BASE58` or `GAINE_MINT_KEYPAIR` | Addresses recorded (verify OFT store + wiring) |
 | **SOLOMON** | `GoLdERbgoL91URFoi5USKQqxYua1YVSUuBCuPtsnzKqy` | `GoLDEDmbque3qd1xfmnzMtg7HMju8p4UoaRX1vBsehjA` | `SOLOMON_MINT_PRIVATE_KEY_BASE58` or `SOLOMON_MINT_KEYPAIR` | Not deployed |
 
 All four must use **vanity** Solana mints; the final token mint on Solana must be vanity (not only the dev/payer keypair). Required env vars must be set and validated before any deploy step.
+
+For **GAINE**, the third column is the **EVM OFT contract** address you deployed (pairing with the Solana mint above).
 
 ---
 

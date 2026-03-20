@@ -48,11 +48,20 @@ export async function sendEvm(
         wrapperAddress = oftAddress
     } else {
         const { contracts } = typeof layerzeroConfig === 'function' ? await layerzeroConfig() : layerzeroConfig
-        const wrapper = contracts.find((c) => c.contract.eid === srcEid)
-        if (!wrapper) throw new Error(`No config for EID ${srcEid}`)
-        wrapperAddress = wrapper.contract.contractName
-            ? (await srcEidHre.deployments.get(wrapper.contract.contractName)).address
-            : wrapper.contract.address!
+        const evmOnSrc = contracts.filter(
+            (c) => c.contract.eid === srcEid && Boolean(c.contract.contractName)
+        )
+        if (evmOnSrc.length === 0) {
+            throw new Error(`No EVM OApp with contractName for EID ${srcEid}`)
+        }
+        if (evmOnSrc.length > 1) {
+            const names = evmOnSrc.map((c) => c.contract.contractName).join(', ')
+            throw new Error(
+                `Multiple EVM OApps on EID ${srcEid} (${names}). Pass --oft-address with the correct MyOFT_* address.`
+            )
+        }
+        const wrapper = evmOnSrc[0]
+        wrapperAddress = (await srcEidHre.deployments.get(wrapper.contract.contractName!)).address
     }
     // 2️⃣ load OFT ABI
     const oftArtifact = await srcEidHre.artifacts.readArtifact('OFT')
