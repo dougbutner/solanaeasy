@@ -241,7 +241,7 @@ task('lz:oft:solana:create', 'Mints new SPL Token and creates new OFT Store acco
             const maxSupplyRaw = localDecimalsToMaxWholeTokens(decimals)
             const { full, compact } = formatTokenAmount(maxSupplyRaw)
             const maxSupplyStatement = `You have chosen ${decimals} local decimals. The maximum supply of your Solana OFT token will be ${full} (~${compact}).\n`
-            const confirmMaxSupply = await promptToContinue(maxSupplyStatement)
+            const confirmMaxSupply = ci ? true : await promptToContinue(maxSupplyStatement)
             if (!confirmMaxSupply) {
                 return
             }
@@ -272,9 +272,11 @@ task('lz:oft:solana:create', 'Mints new SPL Token and creates new OFT Store acco
             let freezeAuthority: PublicKey | null = null
             if (freezeAuthorityStr && onlyOftStore) {
                 freezeAuthority = new PublicKey(freezeAuthorityStr) // will error if invalid
-                const continueFreezeAuthority = await promptToContinue(
-                    `Freeze Authority will be set to ${freezeAuthority.toBase58()}. Continue?`
-                )
+                const continueFreezeAuthority = ci
+                    ? true
+                    : await promptToContinue(
+                          `Freeze Authority will be set to ${freezeAuthority.toBase58()}. Continue?`
+                      )
                 if (!continueFreezeAuthority) {
                     return
                 }

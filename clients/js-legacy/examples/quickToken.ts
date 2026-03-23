@@ -25,9 +25,9 @@ import { createInitializeInstruction, pack, type TokenMetadata } from '@solana/s
 const NAME = 'QUICK';
 const SYMBOL = 'QUICK';
 const DECIMALS = 6;
-const TOTAL_SUPPLY = 999_369n * 10n ** BigInt(DECIMALS);
+const TOTAL_SUPPLY = 21_000_000n * 10n ** BigInt(DECIMALS);
 const TRANSFER_FEE_BPS = 200; // 2%
-const MAX_FEE = (TOTAL_SUPPLY * 200n) / 10_000n; // 2% of total supply in base units
+const MAX_FEE = (TOTAL_SUPPLY * 200n) / 21_000_000n; // 2% of total supply in base units
 const DEFAULT_METADATA_URI = 'https://example.com/quick.json';
 
 const RPC_URL = process.env.RPC_URL ?? clusterApiUrl('devnet');

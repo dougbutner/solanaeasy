@@ -13,7 +13,7 @@ Reference: [LayerZero Solana OFT overview](https://docs.layerzero.network/v2/dev
 | **QUICK** | _set in .env_       | —                         | `QUICK_MINT_PRIVATE_KEY_BASE58` or `QUICK_MINT_KEYPAIR` | Not deployed |
 | **SOLID** | _set in .env_       | —                         | `SOLID_MINT_PRIVATE_KEY_BASE58` or `SOLID_MINT_KEYPAIR` | Not deployed |
 | **GAINE** | `ibozy4AxS6TdsBDerGJN1ZKFFohEubFdHWGcyLxPLFL` | `0x1b06a63d03003ede6554449345b78edb79580545` | `GAINE_MINT_PRIVATE_KEY_BASE58` or `GAINE_MINT_KEYPAIR` | Addresses recorded (verify OFT store + wiring) |
-| **SOLOMON** | `GoLdERbgoL91URFoi5USKQqxYua1YVSUuBCuPtsnzKqy` | `GoLDEDmbque3qd1xfmnzMtg7HMju8p4UoaRX1vBsehjA` | `SOLOMON_MINT_PRIVATE_KEY_BASE58` or `SOLOMON_MINT_KEYPAIR` | Not deployed |
+| **SOLOMON** | `GoLdERbgoL91URFoi5USKQqxYua1YVSUuBCuPtsnzKqy` | `GoLDEDmbque3qd1xfmnzMtg7HMju8p4UoaRX1vBsehjA` | `SOLOMON_MINT_PRIVATE_KEY_BASE58` or `SOLOMON_MINT_KEYPAIR` | Solana mainnet OFT store exists (addresses below; wiring not verified) |
 
 All four must use **vanity** Solana mints; the final token mint on Solana must be vanity (not only the dev/payer keypair). Required env vars must be set and validated before any deploy step.
 
@@ -54,7 +54,7 @@ Follow this order; do not skip. Mark ✅ only after verification (e.g. on-chain 
 |------|-------------|----------|
 | 2.1 | Deploy OFT program to mainnet (or reuse if single program); ensure vanity mints only | ⬜ |
 | 2.2 | Create/wire OFT Stores for QUICK, SOLID, GAINE, SOLOMON on mainnet | ⬜ |
-| 2.3 | Wire initial mainnet peers: Ethereum, Arbitrum, Optimism, Base, BSC, Polygon, Avalanche (eids from metadata) | ⬜ |
+| 2.3 | Wire initial mainnet peers: Ethereum (`30101`), Arbitrum (`30110`), Optimism (`30111`), Base (`30184`), BSC (`30102`), Polygon (`30109`), Avalanche (`30106`) | ⬜ |
 | 2.4 | Set enforced options / rate limits; run canary transfers with small amounts | ⬜ |
 | 2.5 | (Recommended) Verify OFT program on mainnet and submit to OtterSec API for Verified status | ⬜ |
 
@@ -82,8 +82,15 @@ Record each verification event (date, cluster, token, what was verified).
 ## Current state (no verification yet)
 
 - **Scaffold:** `layerzero/` is in place; `layerzero.config.ts` references QUICK, SOLID, GAINE, SOLOMON OFT Store addresses (from `OFT-*.json`).
+- **Solana mainnet:** `layerzero/deployments/solana-mainnet/OFT-SOLOMON.json` exists (OFT store created for SOLOMON).
+- `programId` (SOLOMON): `DMNergMJiPjFDB57gvVwxExirSw8J6xX6kvkw9WuUWxa`
+- `mint` (SOLOMON): `GoLDEDmbque3qd1xfmnzMtg7HMju8p4UoaRX1vBsehjA`
+- `mintAuthority` (SOLOMON): `6Es2BNCrYC3xsmtqSkYzhTiQJkyt9AkpkQTyTsY28CTK`
+- `escrow` (SOLOMON): `CNquMpmgVGyE1erqZgD1angAvzXQrZUdzi6odvDcS4d6`
+- `oftStore` (SOLOMON): `6Es2BNCrYC3xsmtqSkYzhTiQJkyt9AkpkQTyTsY28CTK`
 - **Env:** Run `pnpm run validate-env` before deploy; `pnpm run validate-layerzero-deployments` after creating OFT Stores.
 - **Docs:** [LAYERZERO_DEPLOY.md](LAYERZERO_DEPLOY.md) for commands, chain matrix, and rollback. Do not mark steps above ✅ until verification (e.g. successful transfer or `solana-verify`) is done.
+- **Mainnet wiring selector:** set `LZ_TARGET_NETWORK=mainnet` when running `layerzero.config.ts` to wire Solana mainnet <-> the Phase 2 EVM set for `MyOFT_SOLOMON`.
 
 ---
 

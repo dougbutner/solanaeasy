@@ -28,6 +28,20 @@ If these vars are **unset**, deploy still creates all four OFTs using ordinary C
 
 **Sending from EVM** when multiple OFTs share the same chain: pass `--oft-address` to `lz:oft:send` with the `MyOFT_*` contract address you intend to use.
 
+### MABA: transfer mint authority (Solana)
+
+After `lz:oft:solana:create` in **mint-and-burn adapter (MABA)** mode, you must set the token mint’s **MintTokens** authority to the **OFT Store** (`oftStore` in the deployment JSON) before cross-chain sends. From `clients/js-legacy/` (signer: `PRIVATE_KEY_BASE58` = current mint authority, usually the same wallet that ran `solomonToken` / `quickToken` / etc.):
+
+```bash
+pnpm run transferMintAuthorityToOftStore
+```
+
+By default this reads `layerzero/deployments/solana-mainnet/OFT-SOLOMON.json`. Override with `OFT_DEPLOYMENT_JSON`, or pass explicit pubkeys:
+
+```bash
+pnpm exec tsx examples/transferMintAuthorityToOftStore.ts -- <MINT> <OFT_STORE>
+```
+
 ---
 
 ## Prerequisites
@@ -55,7 +69,7 @@ If these vars are **unset**, deploy still creates all four OFTs using ordinary C
 | Phase | Scope | Chains |
 |-------|--------|--------|
 | **1** | OFT foundation | Solana devnet/testnet + one EVM testnet (e.g. Arbitrum Sepolia) |
-| **2** | Mainnet bootstrap | Solana mainnet + Ethereum, Arbitrum, Optimism, Base, BSC, Polygon, Avalanche |
+| **2** | Mainnet bootstrap | Solana mainnet (`30168`) + Ethereum (`30101`), Arbitrum (`30110`), Optimism (`30111`), Base (`30184`), BSC (`30102`), Polygon (`30109`), Avalanche (`30106`) |
 | **3** | Expand | All OFT-compatible chains (metadata API–driven) |
 
 Detailed step order and verification checklist: [LAYERZERO_PROGRESS.md](LAYERZERO_PROGRESS.md).
@@ -89,7 +103,10 @@ Example mainnet EIDs (confirm from API):
 | Polygon | 30109 |
 | Avalanche | 30106 |
 
-`layerzero/layerzero.config.ts` is wired for **testnet** with QUICK, SOLID, SOLOMON, GAINE OFT Store addresses (from `OFT-QUICK.json`, `OFT-SOLID.json`, `OFT-SOLOMON.json`, `OFT-GAINE.json`). For mainnet, add/duplicate config for mainnet EIDs and deployment paths.
+`layerzero/layerzero.config.ts` supports both **testnet** (default) and **mainnet** wiring.
+
+- Default (`LZ_TARGET_NETWORK` unset): Phase 1 testnet wiring for QUICK/SOLID/SOLOMON/GAINE (Solana testnet <-> Arbitrum Sepolia testnet).
+- Mainnet mode (`LZ_TARGET_NETWORK=mainnet`): Phase 2 Solomon-first wiring for Solana mainnet OFT store (`OFT-SOLOMON.json`) to the Phase 2 EVM set (Ethereum `30101`, Arbitrum `30110`, Optimism `30111`, Base `30184`, BSC `30102`, Polygon `30109`, Avalanche `30106`).
 
 ---
 
@@ -119,6 +136,27 @@ Run from `layerzero/` unless noted.
 
 - **Wire peers**  
   Use the LayerZero toolbox tasks to set peer config (EVM ↔ Solana) per token. See `layerzero/README.md` and `tasks/common/wire.ts`.
+
+  - Testnet: run without `LZ_TARGET_NETWORK` (default).
+  - Mainnet: set `LZ_TARGET_NETWORK=mainnet` when wiring `MyOFT_SOLOMON`.
+
+  Mainnet (Solomon-first) example flow:
+  ```bash
+  # 1) Initialize Solana OFT pathway config accounts for the selected mainnet wiring config
+  LZ_TARGET_NETWORK=mainnet npx hardhat lz:oft:solana:init-config --oapp-config layerzero.config.ts
+
+  # 2) Wire peers on-chain (Solana side in this example)
+  LZ_TARGET_NETWORK=mainnet pnpm hardhat lz:oapp:wire --oapp-config layerzero.config.ts
+  ```
+
+- **Canary transfer (Solana mainnet -> EVM)**  
+  After wiring, send a small amount from `Solana mainnet` (`src-eid=30168`) to each destination chain EID and confirm balances / mint-vs-burn behavior on the destination.
+
+  Example:
+  ```bash
+  # Solana (30168) -> Ethereum (30101)
+  npx hardhat lz:oft:send --src-eid 30168 --dst-eid 30101 --to <EVM_ADDRESS> --amount 1
+  ```
 
 - **Quote / send**  
   - **Quote:** Use the send task with dry-run or quote-only if available (e.g. `quoteSend` / `quote` in tasks). Always run a quote before sending.

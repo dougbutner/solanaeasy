@@ -4,6 +4,7 @@ import { generateConnectionsConfig } from '@layerzerolabs/metadata-tools'
 import { OAppEnforcedOption, OmniPointHardhat } from '@layerzerolabs/toolbox-hardhat'
 
 import { getOftStoreAddress } from './tasks/solana'
+import { MAINNET_CHAINS, SOLANA_MAINNET_EID } from './chain-config'
 
 // Note: Do not use address for EVM OmniPointHardhat contracts. Contracts are loaded using hardhat-deploy.
 // Deploy names match layerzero/deploy/MyOFT.ts (CREATE2 optional via *_OFT_CREATE2_SALT in .env).
@@ -75,6 +76,40 @@ const SOLANA_ENFORCED_OPTIONS: OAppEnforcedOption[] = [
 export default async function () {
     // note: pathways declared here are automatically bidirectional
     // One EVM OFT deployment per token, each wired to the matching Solana OFT Store
+    const target = (process.env.LZ_TARGET_NETWORK ?? 'testnet').toLowerCase()
+
+    if (target === 'mainnet') {
+        // Solomon-first rollout: wire Solana mainnet OFT store to each Phase 2 EVM chain.
+        const solanaMainnetEid = SOLANA_MAINNET_EID as unknown as EndpointId
+        const solanaSOLOMONMainnet: OmniPointHardhat = {
+            eid: solanaMainnetEid,
+            address: getOftStoreAddress(solanaMainnetEid, 'SOLOMON'),
+        }
+
+        const evmSOLOMONMainnetByChain: OmniPointHardhat[] = MAINNET_CHAINS.filter((c) => c.name !== 'Solana').map(
+            (chain) => ({
+                eid: chain.eid as unknown as EndpointId,
+                contractName: 'MyOFT_SOLOMON',
+            })
+        )
+
+        const connections = await generateConnectionsConfig(
+            evmSOLOMONMainnetByChain.map((evm) => [
+                evm,
+                solanaSOLOMONMainnet,
+                [['LayerZero Labs'], []],
+                [15, 32],
+                [SOLANA_ENFORCED_OPTIONS, EVM_ENFORCED_OPTIONS],
+            ]) as any
+        )
+
+        return {
+            contracts: [...evmSOLOMONMainnetByChain.map((c) => ({ contract: c })), { contract: solanaSOLOMONMainnet }],
+            connections,
+        }
+    }
+
+    // Default: existing Phase 1 testnet wiring (QUICK/SOLID/SOLOMON/GAINE)
     const connections = await generateConnectionsConfig([
         [
             evmQUICK,
