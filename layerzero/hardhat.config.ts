@@ -24,6 +24,7 @@ import { HardhatUserConfig, HttpNetworkAccountsUserConfig } from 'hardhat/types'
 
 import { EndpointId } from '@layerzerolabs/lz-definitions'
 
+import { buildSolomonMainnetNetworks } from './hardhat.solomon-mainnet-networks'
 import './tasks/index'
 
 // Set your preferred authentication method
@@ -71,43 +72,9 @@ const config: HardhatUserConfig = {
             url: process.env.RPC_URL_ARB_SEPOLIA || 'https://arbitrum-sepolia.gateway.tenderly.co',
             accounts,
         },
-        // Phase 2 mainnet networks (required for wiring/deploying EVM OFTs).
-        // Provide RPC endpoints via env vars before running on mainnet.
-        ethereum: {
-            eid: 30101 as EndpointId,
-            url: process.env.RPC_URL_ETHEREUM || 'https://ethereum.gateway.tenderly.co',
-            accounts,
-        },
-        arbitrum: {
-            eid: 30110 as EndpointId,
-            url: process.env.RPC_URL_ARBITRUM || 'https://arbitrum.gateway.tenderly.co',
-            accounts,
-        },
-        optimism: {
-            eid: 30111 as EndpointId,
-            url: process.env.RPC_URL_OPTIMISM || 'https://optimism.gateway.tenderly.co',
-            accounts,
-        },
-        base: {
-            eid: 30184 as EndpointId,
-            url: process.env.RPC_URL_BASE || 'https://base.gateway.tenderly.co',
-            accounts,
-        },
-        bsc: {
-            eid: 30102 as EndpointId,
-            url: process.env.RPC_URL_BSC || 'https://bsc.gateway.tenderly.co',
-            accounts,
-        },
-        polygon: {
-            eid: 30109 as EndpointId,
-            url: process.env.RPC_URL_POLYGON || 'https://polygon.gateway.tenderly.co',
-            accounts,
-        },
-        avalanche: {
-            eid: 30106 as EndpointId,
-            url: process.env.RPC_URL_AVALANCHE || 'https://avalanche.gateway.tenderly.co',
-            accounts,
-        },
+        // SOLOMON mainnet EVM networks (Phase A + B). RPCs: see `hardhat.solomon-mainnet-networks.ts`
+        // and `.env.solomon.mainnet.example` (or legacy `RPC_URL_ETHEREUM`-style keys per network).
+        ...buildSolomonMainnetNetworks(accounts),
         hardhat: {
             // Need this for testing because TestHelperOz5.sol is exceeding the compiled contract size limit
             allowUnlimitedContractSize: true,

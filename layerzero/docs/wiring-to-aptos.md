@@ -43,7 +43,7 @@ Currently, you can only perform **one-way wiring from Solana → Move-VM** using
    Execute the following commands in the Solana example directory:
 
    ```bash
-   npx hardhat lz:oapp:solana:init-config --oapp-config move.layerzero.config.ts
+   npx hardhat lz:oft:solana:init-config --oapp-config move.layerzero.config.ts
    ```
 
    ```bash

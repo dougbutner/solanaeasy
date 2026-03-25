@@ -1,0 +1,11 @@
+{
+  "exportedAt": "2026-03-25T21:43:47.842Z",
+  "solana": [
+    {
+      "from": "deployments/solana-mainnet/OFT-SOLOMON.json",
+      "to": "deployments-solomon/mainnet/solana/OFT-SOLOMON.json"
+    }
+  ],
+  "evm": [],
+  "notes": "Re-run after each deploy/wire. EIDs: see chain-config.ts and LayerZero metadata API."
+}

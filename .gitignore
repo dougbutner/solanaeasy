@@ -10,3 +10,4 @@ dist
 .idea
 .env
 *.json
+!layerzero/deployments-solomon/**/*.json

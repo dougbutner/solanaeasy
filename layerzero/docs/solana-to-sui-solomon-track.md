@@ -1,6 +1,6 @@
 # Solomon OFT: Solana mainnet <-> Sui (LayerZero) track
 
-This is a Phase 2+ documentation track for connecting your **Solomon** OFT (canonical on Solana) to a **Sui** OFT/OApp via LayerZero.
+This documentation track covers connecting your **Solomon** OFT (canonical on Solana) to a **Sui** OFT/OApp via LayerZero. EVM + Solana SOLOMON deployment layout for this repo lives under [`deployments-solomon/mainnet/`](../deployments-solomon/mainnet/); see [`docs/solomon-rollout-chain-onboarding.md`](solomon-rollout-chain-onboarding.md) for the mainnet checklist.
 
 ## Important scope note (this repo)
 This codebase’s current automation (`layerzero/tasks/*`) is built for **Solana <-> EVM** pathways.

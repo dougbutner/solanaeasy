@@ -23,6 +23,7 @@
 - [Scaffold this example](#scaffold-this-example)
 - [Helper Tasks](#helper-tasks)
 - [Setup](#setup)
+  - [Mainnet vs testnet (this repo)](#mainnet-vs-testnet-this-repo)
 - [Build](#build)
 - [Deploy](#deploy)
 - [Enable Messaging](#enable-messaging)
@@ -111,7 +112,20 @@ cargo install --git https://github.com/solana-foundation/anchor --tag v0.31.1 an
 
 <br>
 
-- Copy `.env.example` into a new `.env`
+### Mainnet vs testnet (this repo)
+
+`layerzero.config.ts` switches on **`LZ_TARGET_NETWORK`** (default **`testnet`** if unset):
+
+| Mode | `LZ_TARGET_NETWORK` | What gets wired | Env / docs |
+|------|---------------------|-----------------|------------|
+| **Testnet** (multi-token demo) | unset or `testnet` | QUICK, SOLID, SOLOMON, GAINE ↔ Arbitrum Sepolia + Solana devnet | `.env` from [`.env.example`](./.env.example) |
+| **SOLOMON mainnet** | `mainnet` | SOLOMON only: Solana mainnet OFT store ↔ EVM `MyOFT_SOLOMON` on each chain in the active [phase](./chain-config.ts) | [`.env.solomon.mainnet.example`](./.env.solomon.mainnet.example) → `.env.solomon.mainnet` + `DOTENV_CONFIG_PATH`; see [docs/solomon-rollout-chain-onboarding.md](./docs/solomon-rollout-chain-onboarding.md) |
+
+For **any** mainnet Hardhat task (`lz:deploy`, `lz:oft:solana:init-config`, `lz:oapp:wire`), set **`LZ_TARGET_NETWORK=mainnet`** (e.g. in `.env.solomon.mainnet`) so the config does not use the testnet wiring graph.
+
+---
+
+- Copy `.env.example` into a new `.env` (for the **testnet** walkthrough below)
 - Solana Deployer:
   - To set up your Solana deployer, you have 3 options:
     - Use the keypair at the default path of `~/.config/solana/id.json`. For this, no action is needed.
@@ -183,6 +197,12 @@ Where `<OFT_PROGRAM_ID>` is replaced with your OFT Program ID copied from the pr
 
 ## Deploy
 
+### SOLOMON-only mainnet rollout (this repo)
+
+- **Env profile**: copy [`.env.solomon.mainnet.example`](./.env.solomon.mainnet.example) to `.env.solomon.mainnet` (gitignored) and run Hardhat with `DOTENV_CONFIG_PATH=.env.solomon.mainnet`.
+- **Phases**: set `LZ_SOLOMON_PHASE=a` for the first seven EVM chains, or `b` / `all` for Phase A + extended EVM list — see [`chain-config.ts`](./chain-config.ts) and [`docs/solomon-rollout-chain-onboarding.md`](./docs/solomon-rollout-chain-onboarding.md).
+- **Exports**: after deploy/wire, run `pnpm run solomon:export-deployments` to refresh [`deployments-solomon/mainnet/`](./deployments-solomon/mainnet/).
+
 :information_source: LayerZero's default deployment path for Solana OFTs require you to deploy your own OFT program as this means you own the Upgrade Authority and don't rely on LayerZero to manage that authority for you. Read [this](https://neodyme.io/en/blog/solana_upgrade_authority/) to understand more on why this is important.
 
 To deploy a Solana OFT, you need to both deploy an OFT Program and also create the OFT Store, alongside the other configuration steps that are handled by the provided tasks. To understand the relationship between the OFT Program and the OFT Store, read the section ['The OFT Program'](https://docs.layerzero.network/v2/developers/solana/oft/overview#the-oft-program) on the LayerZero docs.
@@ -225,10 +245,13 @@ pnpm hardhat lz:deploy # follow the prompts
 
 ## Enable Messaging
 
-Run the following command to initialize the SendConfig and ReceiveConfig Accounts. This step is unique to pathways that involve Solana.
+This step initializes **SendConfig** / **ReceiveConfig** on Solana (Solana pathways only), then **wires** peers and options. Order and task names match the [LayerZero Solana OFT example](https://github.com/LayerZero-Labs/devtools/tree/main/examples/oft-solana).
+
+### Testnet (default `layerzero.config.ts`)
 
 ```bash
 npx hardhat lz:oft:solana:init-config --oapp-config layerzero.config.ts
+pnpm hardhat lz:oapp:wire --oapp-config layerzero.config.ts
 ```
 
 <details>
@@ -236,15 +259,24 @@ You only need to do this when initializing the OFT pathways the first time. If a
 </details>
 <br>
 
+### SOLOMON mainnet
+
+Use the same tasks, but load **`LZ_TARGET_NETWORK=mainnet`** (and your Solana secrets / RPCs), e.g. copy [`.env.solomon.mainnet.example`](./.env.solomon.mainnet.example) to `.env.solomon.mainnet` and use:
+
+```bash
+DOTENV_CONFIG_PATH=.env.solomon.mainnet pnpm hardhat lz:oft:solana:init-config --oapp-config layerzero.config.ts
+DOTENV_CONFIG_PATH=.env.solomon.mainnet pnpm hardhat lz:oapp:wire --oapp-config layerzero.config.ts
+```
+
+Phase breadth is controlled by **`LZ_SOLOMON_PHASE`** (`a` = seven EVM chains, `b` / `all` = Phase A + B). See [`chain-config.ts`](./chain-config.ts) and [docs/solomon-rollout-chain-onboarding.md](./docs/solomon-rollout-chain-onboarding.md).
+
+---
+
 The OFT standard builds on top of the OApp standard, which enables generic message-passing between chains. After deploying the OFT on the respective chains, you enable messaging by running the [wiring](https://docs.layerzero.network/v2/concepts/glossary#wire--wiring) task.
 
 > :information_source: This example uses the [Simple Config Generator](https://docs.layerzero.network/v2/developers/evm/technical-reference/simple-config), which is recommended over manual configuration.
 
-Run the wiring task:
-
-```bash
-pnpm hardhat lz:oapp:wire --oapp-config layerzero.config.ts
-```
+Optional: verify default pathway settings on [LayerZero Scan — Default Checker](https://layerzeroscan.com/tools/defaults?version=V2).
 
 ## Sending OFTs
 
@@ -349,6 +381,7 @@ pnpm hardhat lz:oft:solana:create --eid 40168 --program-id <PROGRAM_ID> --mint <
 Before deploying, ensure the following:
 
 - (required) for EVM OFTs used in this flow, if you uncommented the testnet mint line in `contracts/MyOFT.sol`, ensure it is commented out for production
+- (required for SOLOMON mainnet) **`LZ_TARGET_NETWORK=mainnet`** is set when deploying/wiring so `layerzero.config.ts` uses the SOLOMON mainnet graph, not testnet
 - (recommended) you have profiled the gas usage of `lzReceive` on your destination chains
 <!-- TODO: mention https://docs.layerzero.network/v2/developers/evm/technical-reference/integration-checklist#set-security-and-executor-configurations after it has been updated to reference the CLI -->
 
@@ -362,13 +395,14 @@ pnpm test
 
 ### Adding other chains
 
-To add additional chains to your OFT deployment:
+To add additional **EVM** chains to the **SOLOMON mainnet** rollout:
 
-1. If EVM, add the new chain configuration to your `hardhat.config.ts`
-2. Deploy the OFT contract on the new chain
-3. Update your `layerzero.config.ts` to include the new chain
-4. Run `init-config` for the new pathway (if it involves Solana)
-5. Run the wiring task
+1. Add the chain to [`chain-config.ts`](./chain-config.ts) (`SOLOMON_MAINNET_PHASE_B_EVM` or a new phase) with the correct `EndpointId` from `@layerzerolabs/lz-definitions` / [LayerZero metadata](https://metadata.layerzero-api.com/v1/metadata).
+2. Register the network + RPC in [`hardhat.solomon-mainnet-networks.ts`](./hardhat.solomon-mainnet-networks.ts) (merged into [`hardhat.config.ts`](./hardhat.config.ts)).
+3. Deploy **`MyOFT_SOLOMON`** on that chain (`pnpm hardhat lz:deploy --network <name>` with mainnet env).
+4. Run **`lz:oft:solana:init-config`** then **`lz:oapp:wire`** with `LZ_TARGET_NETWORK=mainnet` and the same `--oapp-config layerzero.config.ts`.
+
+For the default **testnet** multi-token demo, add the network to `hardhat.config.ts` and extend `layerzero.config.ts` in the testnet branch (QUICK / SOLID / SOLOMON / GAINE) as in upstream [oft-solana](https://github.com/LayerZero-Labs/devtools/tree/main/examples/oft-solana).
 
 ### Using Multisigs
 
@@ -377,10 +411,10 @@ For production deployments, consider using multisig wallets:
 - Solana: Use [Squads](https://squads.so/) multisig with the `--multisig-key` flag
 - EVM chains: Use Safe or similar multisig solutions
 
-If your Solana OFT's delegate/owner is a Squads multisig, you can simply append the `--multisig-key` flag to the end of tasks such as the `wire` task:
+If your Solana OFT's delegate/owner is a Squads multisig, append `--multisig-key` to tasks such as `wire` (use the same env as your network, e.g. mainnet):
 
 ```bash
-pnpm hardhat lz:oapp:wire --oapp-config layerzero.config.ts --multisig-key <SQUADS_MULTISIG_ACCOUNT>
+DOTENV_CONFIG_PATH=.env.solomon.mainnet pnpm hardhat lz:oapp:wire --oapp-config layerzero.config.ts --multisig-key <SQUADS_MULTISIG_ACCOUNT>
 ```
 
 ### Set a new Mint Authority Multisig
@@ -495,16 +529,20 @@ Fetches and prints info related to the Solana OFT.
 
 ### Note on the LZ Config file
 
-In [layerzero.config.ts](./layerzero.config.ts), the `solanaContract.address` is auto-populated with the `oftStore` address from the deployment file, which has the default path of `deployments/solana-<mainnet/testnet>`.
+In [layerzero.config.ts](./layerzero.config.ts), the **Solana** `OmniPointHardhat` uses `address: getOftStoreAddress(eid, deploymentName)` so the OFT Store comes from deployment JSON under `deployments/solana-mainnet/` or `deployments/solana-testnet/` (e.g. **`OFT-SOLOMON.json`** for SOLOMON).
+
+- **Testnet** (`LZ_TARGET_NETWORK` unset or `testnet`): four tokens (QUICK, SOLID, SOLOMON, GAINE), each with its own deployment name / JSON.
+- **Mainnet** (`LZ_TARGET_NETWORK=mainnet`): **SOLOMON only** — Solana side uses the SOLOMON OFT Store; EVM side uses **`MyOFT_SOLOMON`** only. The EVM chain list follows **`LZ_SOLOMON_PHASE`** and [`chain-config.ts`](./chain-config.ts).
 
 ```typescript
-const solanaContract: OmniPointHardhat = {
-  eid: EndpointId.SOLANA_V2_TESTNET,
-  address: getOftStoreAddress(EndpointId.SOLANA_V2_TESTNET),
-};
+// Illustrative (testnet): Solana address comes from deployments, not a literal
+const solanaSOLOMON: OmniPointHardhat = {
+  eid: solanaTestnetEid,
+  address: getOftStoreAddress(solanaTestnetEid, 'SOLOMON'),
+}
 ```
 
-:warning: Ensure that you `address` is specified only for the solana contract object. Do not specify addresses for the EVM chain contract objects. Under the hood, we use `hardhat-deploy` to retrieve the contract addresses of the deployed EVM chain contracts. You will run into an error if you specify `address` for an EVM chain contract object.
+:warning: Specify **`address` only for the Solana contract object.** Do not set `address` on EVM `OmniPointHardhat` entries — `hardhat-deploy` resolves deployed EVM contract addresses. Setting `address` on EVM entries will error.
 
 ### Mint OFT on Solana
 
@@ -528,7 +566,7 @@ spl-token mint <TOKEN_MINT> <AMOUNT> --multisig-signer ~/.config/solana/id.json 
 
 :information_source: `~/.config/solana/id.json` assumes that you will use the keypair in the default location. To verify if this path applies to you, run `solana config get` and not the keypair path value.
 
-:information_source: You can get the `<MINT_AUTHORITY>` address from [deployments/solana-testnet/OFT.json](deployments/solana-testnet/OFT.json).
+:information_source: You can get the `<MINT_AUTHORITY>` from the deployment JSON for your token (e.g. [deployments/solana-testnet/OFT.json](deployments/solana-testnet/OFT.json) or [deployments/solana-mainnet/OFT-SOLOMON.json](deployments/solana-mainnet/OFT-SOLOMON.json) for SOLOMON on mainnet).
 
 ### Solana Program Verification
 

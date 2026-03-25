@@ -53,5 +53,5 @@ The table below mirrors the initial shortlist collected for your milestone. **Re
 
 ## Suggested next step (where to use this doc)
 - If you want to build UI/integration features for gold token liquidity or price tracking, use this doc to find CAs.
-- If you want to expand Solomon’s cross-chain transfers, update `layerzero/hardhat.config.ts` and `layerzero/layerzero.config.ts` (Phase 2 mainnet wiring).
+- If you want to expand Solomon’s cross-chain transfers, add networks in [`layerzero/chain-config.ts`](../chain-config.ts) and [`layerzero/hardhat.solomon-mainnet-networks.ts`](../hardhat.solomon-mainnet-networks.ts), then deploy/wire with `LZ_TARGET_NETWORK=mainnet` — see [`docs/solomon-rollout-chain-onboarding.md`](solomon-rollout-chain-onboarding.md).
 

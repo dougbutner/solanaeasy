@@ -18,7 +18,8 @@
     "test:hardhat": "hardhat test",
     "test:scripts": "jest --config jest.config.ts --runInBand --testMatch \"**/*.script.test.ts\"",
     "deploy:oft-program:mainnet": "node scripts/deploy-oft-program.mjs mainnet-beta",
-    "deploy:oft-program:devnet": "node scripts/deploy-oft-program.mjs devnet"
+    "deploy:oft-program:devnet": "node scripts/deploy-oft-program.mjs devnet",
+    "solomon:export-deployments": "node scripts/export-solomon-deployments.mjs"
   },
   "resolutions": {
     "@solana/web3.js": "^1.98.0",

@@ -3,8 +3,8 @@ import { ExecutorOptionType } from '@layerzerolabs/lz-v2-utilities'
 import { generateConnectionsConfig } from '@layerzerolabs/metadata-tools'
 import { OAppEnforcedOption, OmniPointHardhat } from '@layerzerolabs/toolbox-hardhat'
 
+import { SOLANA_MAINNET_EID, getSolomonMainnetEvmChainsForPhase, parseSolomonPhase } from './chain-config'
 import { getOftStoreAddress } from './tasks/solana'
-import { MAINNET_CHAINS, SOLANA_MAINNET_EID } from './chain-config'
 
 // Note: Do not use address for EVM OmniPointHardhat contracts. Contracts are loaded using hardhat-deploy.
 // Deploy names match layerzero/deploy/MyOFT.ts (CREATE2 optional via *_OFT_CREATE2_SALT in .env).
@@ -79,16 +79,18 @@ export default async function () {
     const target = (process.env.LZ_TARGET_NETWORK ?? 'testnet').toLowerCase()
 
     if (target === 'mainnet') {
-        // Solomon-first rollout: wire Solana mainnet OFT store to each Phase 2 EVM chain.
+        // SOLOMON-only mainnet: wire Solana OFT store to each EVM chain for the active phase.
+        // `LZ_SOLOMON_PHASE=a` (default) = Phase A EVM only; `b` or `all` = Phase A + B.
+        const solomonPhase = parseSolomonPhase(process.env.LZ_SOLOMON_PHASE)
         const solanaMainnetEid = SOLANA_MAINNET_EID as unknown as EndpointId
         const solanaSOLOMONMainnet: OmniPointHardhat = {
             eid: solanaMainnetEid,
             address: getOftStoreAddress(solanaMainnetEid, 'SOLOMON'),
         }
 
-        const evmSOLOMONMainnetByChain: OmniPointHardhat[] = MAINNET_CHAINS.filter((c) => c.name !== 'Solana').map(
+        const evmSOLOMONMainnetByChain: OmniPointHardhat[] = getSolomonMainnetEvmChainsForPhase(solomonPhase).map(
             (chain) => ({
-                eid: chain.eid as unknown as EndpointId,
+                eid: chain.eid,
                 contractName: 'MyOFT_SOLOMON',
             })
         )
@@ -111,20 +113,8 @@ export default async function () {
 
     // Default: existing Phase 1 testnet wiring (QUICK/SOLID/SOLOMON/GAINE)
     const connections = await generateConnectionsConfig([
-        [
-            evmQUICK,
-            solanaQUICK,
-            [['LayerZero Labs'], []],
-            [15, 32],
-            [SOLANA_ENFORCED_OPTIONS, EVM_ENFORCED_OPTIONS],
-        ],
-        [
-            evmSOLID,
-            solanaSOLID,
-            [['LayerZero Labs'], []],
-            [15, 32],
-            [SOLANA_ENFORCED_OPTIONS, EVM_ENFORCED_OPTIONS],
-        ],
+        [evmQUICK, solanaQUICK, [['LayerZero Labs'], []], [15, 32], [SOLANA_ENFORCED_OPTIONS, EVM_ENFORCED_OPTIONS]],
+        [evmSOLID, solanaSOLID, [['LayerZero Labs'], []], [15, 32], [SOLANA_ENFORCED_OPTIONS, EVM_ENFORCED_OPTIONS]],
         [
             evmSOLOMON,
             solanaSOLOMON,
@@ -132,13 +122,7 @@ export default async function () {
             [15, 32],
             [SOLANA_ENFORCED_OPTIONS, EVM_ENFORCED_OPTIONS],
         ],
-        [
-            evmGAINE,
-            solanaGAINE,
-            [['LayerZero Labs'], []],
-            [15, 32],
-            [SOLANA_ENFORCED_OPTIONS, EVM_ENFORCED_OPTIONS],
-        ],
+        [evmGAINE, solanaGAINE, [['LayerZero Labs'], []], [15, 32], [SOLANA_ENFORCED_OPTIONS, EVM_ENFORCED_OPTIONS]],
     ])
 
     return {

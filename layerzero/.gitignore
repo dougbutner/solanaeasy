@@ -1,6 +1,7 @@
 .anchor
 node_modules
 .env
+.env.solomon.mainnet
 coverage
 coverage.json
 target
