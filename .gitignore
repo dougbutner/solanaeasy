@@ -11,3 +11,5 @@ dist
 .env
 *.json
 !layerzero/deployments-solomon/**/*.json
+*.env.solomon.mainnet
+.env*
