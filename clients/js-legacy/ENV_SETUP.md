@@ -1,6 +1,11 @@
+# Local `.env` for this workspace (not committed)
+
+Create `clients/js-legacy/.env` locally (gitignored). Template:
+
+```bash
 # =============================================================================
-# Full .env example for QUICK, SOLID, SOLOMON, GAINE mints + LayerZero OFT
-# Copy to .env and fill in values. Run: pnpm run validate-env (from repo root).
+# For QUICK, SOLID, SOLOMON, GAINE mints + LayerZero OFT
+# Run: pnpm run validate-env (from repo root).
 # GAINE-only mint keys: node scripts/validate-env.mjs --tokens=GAINE
 # =============================================================================
 
@@ -25,7 +30,6 @@ GAINE_METADATA_URI=https://example.com/metadata-gain.json
 
 # --- Vanity mint keypairs (required for LayerZero / deploy validation) ---
 # For each token set EITHER the base58 private key OR the path to keypair JSON.
-# Get base58: solana-keygen grind ... then cat keypair.json | node -e "const k=require('fs').readFileSync(0,'utf8');const b=require('bs58');console.log(b.encode(Buffer.from(JSON.parse(k))));"
 
 # QUICK – set one of:
 QUICK_MINT_PRIVATE_KEY_BASE58=
@@ -46,3 +50,4 @@ GAINE_MINT_PRIVATE_KEY_BASE58=
 # --- Optional: used by scripts when passed via env instead of CLI ---
 # MINT=<mint_pubkey>   for distribute mode or updateTokenMetadata
 # FIELD=uri VALUE=https://...  for updateTokenMetadata
+```

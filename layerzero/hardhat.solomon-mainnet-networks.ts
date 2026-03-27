@@ -1,6 +1,6 @@
 /**
  * Hardhat networks for SOLOMON mainnet EVM rollout (Phase A + B).
- * Override with RPC_URL_* env vars (see `.env.solomon.mainnet.example`).
+ * Override with RPC_URL_* env vars (see `docs/environment-templates.md`).
  *
  * Defaults are public RPC endpoints for convenience — use dedicated providers in production.
  */
@@ -83,6 +83,7 @@ function defaultRpcForPhaseB(net: string): string {
         bera: 'https://rpc.berachain.com',
         monad: 'https://rpc.monad.xyz',
         movement: 'https://mainnet.movementnetwork.xyz/v1',
+        plasma: 'https://rpc.plasma.to',
         plume: 'https://rpc.plumenetwork.xyz',
         initia: 'https://rpc.initia.xyz',
         iota: 'https://json-rpc.evm.iotaledger.net',
@@ -91,6 +92,7 @@ function defaultRpcForPhaseB(net: string): string {
         bahamut: 'https://rpc1.ftnchain.com',
         chiliz: 'https://rpc.chiliz.com',
         peaq: 'https://peaq.api.onfinality.io/public',
+        xdc: 'https://rpc.xdc.org',
         aurora: 'https://mainnet.aurora.dev',
     }
     return map[net] ?? 'https://ethereum.gateway.tenderly.co'

@@ -8,7 +8,7 @@ process.env.TS_NODE_COMPILER_OPTIONS = JSON.stringify({
 // Get the environment configuration from .env file
 //
 // To make use of automatic environment setup:
-// - Duplicate .env.example file and name it .env
+// - Create `layerzero/.env` locally (see docs/environment-templates.md)
 // - Fill in the environment variables
 import 'dotenv/config'
 
@@ -73,7 +73,7 @@ const config: HardhatUserConfig = {
             accounts,
         },
         // SOLOMON mainnet EVM networks (Phase A + B). RPCs: see `hardhat.solomon-mainnet-networks.ts`
-        // and `.env.solomon.mainnet.example` (or legacy `RPC_URL_ETHEREUM`-style keys per network).
+        // and `docs/environment-templates.md` (or legacy `RPC_URL_ETHEREUM`-style keys per network).
         ...buildSolomonMainnetNetworks(accounts),
         hardhat: {
             // Need this for testing because TestHelperOz5.sol is exceeding the compiled contract size limit

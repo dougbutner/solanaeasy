@@ -118,14 +118,14 @@ cargo install --git https://github.com/solana-foundation/anchor --tag v0.31.1 an
 
 | Mode | `LZ_TARGET_NETWORK` | What gets wired | Env / docs |
 |------|---------------------|-----------------|------------|
-| **Testnet** (multi-token demo) | unset or `testnet` | QUICK, SOLID, SOLOMON, GAINE ↔ Arbitrum Sepolia + Solana devnet | `.env` from [`.env.example`](./.env.example) |
-| **SOLOMON mainnet** | `mainnet` | SOLOMON only: Solana mainnet OFT store ↔ EVM `MyOFT_SOLOMON` on each chain in the active [phase](./chain-config.ts) | [`.env.solomon.mainnet.example`](./.env.solomon.mainnet.example) → `.env.solomon.mainnet` + `DOTENV_CONFIG_PATH`; see [docs/solomon-rollout-chain-onboarding.md](./docs/solomon-rollout-chain-onboarding.md) |
+| **Testnet** (multi-token demo) | unset or `testnet` | QUICK, SOLID, SOLOMON, GAINE ↔ Arbitrum Sepolia + Solana devnet | `.env` from [docs/environment-templates.md](./docs/environment-templates.md) |
+| **SOLOMON mainnet** | `mainnet` | SOLOMON only: Solana mainnet OFT store ↔ EVM `MyOFT_SOLOMON` on each chain in the active [phase](./chain-config.ts) | [environment-templates.md](./docs/environment-templates.md) → `.env.solomon.mainnet` + `DOTENV_CONFIG_PATH`; see [docs/solomon-rollout-chain-onboarding.md](./docs/solomon-rollout-chain-onboarding.md) |
 
 For **any** mainnet Hardhat task (`lz:deploy`, `lz:oft:solana:init-config`, `lz:oapp:wire`), set **`LZ_TARGET_NETWORK=mainnet`** (e.g. in `.env.solomon.mainnet`) so the config does not use the testnet wiring graph.
 
 ---
 
-- Copy `.env.example` into a new `.env` (for the **testnet** walkthrough below)
+- Create `layerzero/.env` for the **testnet** walkthrough using [docs/environment-templates.md](./docs/environment-templates.md)
 - Solana Deployer:
   - To set up your Solana deployer, you have 3 options:
     - Use the keypair at the default path of `~/.config/solana/id.json`. For this, no action is needed.
@@ -199,7 +199,7 @@ Where `<OFT_PROGRAM_ID>` is replaced with your OFT Program ID copied from the pr
 
 ### SOLOMON-only mainnet rollout (this repo)
 
-- **Env profile**: copy [`.env.solomon.mainnet.example`](./.env.solomon.mainnet.example) to `.env.solomon.mainnet` (gitignored) and run Hardhat with `DOTENV_CONFIG_PATH=.env.solomon.mainnet`.
+- **Env profile**: create `.env.solomon.mainnet` (gitignored) from [docs/environment-templates.md](./docs/environment-templates.md) and run Hardhat with `DOTENV_CONFIG_PATH=.env.solomon.mainnet`.
 - **Phases**: set `LZ_SOLOMON_PHASE=a` for the first seven EVM chains, or `b` / `all` for Phase A + extended EVM list — see [`chain-config.ts`](./chain-config.ts) and [`docs/solomon-rollout-chain-onboarding.md`](./docs/solomon-rollout-chain-onboarding.md).
 - **Exports**: after deploy/wire, run `pnpm run solomon:export-deployments` to refresh [`deployments-solomon/mainnet/`](./deployments-solomon/mainnet/).
 
@@ -261,7 +261,7 @@ You only need to do this when initializing the OFT pathways the first time. If a
 
 ### SOLOMON mainnet
 
-Use the same tasks, but load **`LZ_TARGET_NETWORK=mainnet`** (and your Solana secrets / RPCs), e.g. copy [`.env.solomon.mainnet.example`](./.env.solomon.mainnet.example) to `.env.solomon.mainnet` and use:
+Use the same tasks, but load **`LZ_TARGET_NETWORK=mainnet`** (and your Solana secrets / RPCs), e.g. create `.env.solomon.mainnet` from [docs/environment-templates.md](./docs/environment-templates.md) and use:
 
 ```bash
 DOTENV_CONFIG_PATH=.env.solomon.mainnet pnpm hardhat lz:oft:solana:init-config --oapp-config layerzero.config.ts

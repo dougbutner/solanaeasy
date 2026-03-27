@@ -51,7 +51,8 @@ pnpm exec tsx examples/transferMintAuthorityToOftStore.ts -- <MINT> <OFT_STORE>
    ```bash
    pnpm run validate-env
    ```
-   This checks that at least one of `QUICK_MINT_PRIVATE_KEY_BASE58` or `QUICK_MINT_KEYPAIR` (and same for SOLID, SOLOMON, GAINE) is set in `clients/js-legacy/.env`. If any are missing, the script exits with code 1 and lists what to set. **Do not run deploy steps until this passes.**
+   This checks that at least one of `QUICK_MINT_PRIVATE_KEY_BASE58` or `QUICK_MINT_KEYPAIR` (and same for SOLID, SOLOMON, GAINE) is set in `clients/js-legacy/.env`. If any are missing, the script exits with code 1 and lists what to set. **Do not run deploy steps until this passes.**  
+   Variable list (copy into your local gitignored `.env`): [clients/js-legacy/ENV_SETUP.md](clients/js-legacy/ENV_SETUP.md).
 
 2. **Mint tokens on Solana**  
    Create QUICK, SOLID, SOLOMON, GAINE at vanity addresses using `quickToken.ts` / `solidToken.ts` / `solomonToken.ts` / `gainToken.ts` as in [DEPLOY.md](DEPLOY.md). Save each mint address.

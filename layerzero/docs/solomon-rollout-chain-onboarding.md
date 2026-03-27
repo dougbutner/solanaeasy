@@ -13,7 +13,7 @@ Use this for **each** chain before relying on production liquidity. EIDs and con
 
 1. **EVM (this repo)**  
    - Ensure [`hardhat.config.ts`](../hardhat.config.ts) includes the network (via [`hardhat.solomon-mainnet-networks.ts`](../hardhat.solomon-mainnet-networks.ts)).  
-   - Set `RPC_URL_<NETWORK>` in `.env.solomon.mainnet` (see [`.env.solomon.mainnet.example`](../.env.solomon.mainnet.example)).  
+   - Set `RPC_URL_<NETWORK>` in `.env.solomon.mainnet` (create locally from [environment-templates.md](./environment-templates.md)).  
    - **Required:** `LZ_TARGET_NETWORK=mainnet` so [`layerzero.config.ts`](../layerzero.config.ts) selects the SOLOMON mainnet graph (not the default testnet wiring).  
    - Choose phase: `LZ_SOLOMON_PHASE=a` (7 EVM chains) or `b` / `all` (Phase A + B).
 
@@ -23,7 +23,8 @@ Use this for **each** chain before relying on production liquidity. EIDs and con
 3. **Non-EVM tracks** (not automated by default Hardhat wiring here)  
    - **Aptos**: see `tasks/aptos/*` and `docs/wiring-to-aptos.md`.  
    - **Sui**: see `docs/solana-to-sui-solomon-track.md` (peer = OFT **package** ID).  
-   - **Tron**: use LayerZero Tron tooling / docs; store artifacts under `deployments-solomon/mainnet/non-evm/`.
+   - **Tron**: use LayerZero Tron tooling / docs; store artifacts under `deployments-solomon/mainnet/non-evm/`.  
+   - **Stellar**: LayerZero metadata lists `stellar-mainnet-custom` ([metadata API](https://metadata.layerzero-api.com/v1/metadata)); mainnet V2 `eid` was not published yet as of Mar 2026 — confirm `deployments` before adding a numeric `eid` in `chain-config.ts` ([Stellar track in `SOLOMON_MAINNET_NON_EVM_ROLLOUT`](../chain-config.ts)).
 
 ## 3. Deploy EVM peer (if applicable)
 
@@ -71,6 +72,6 @@ Writes copies under `deployments-solomon/mainnet/` and refreshes `manifest.json`
 | Phase | Env | Scope |
 |-------|-----|--------|
 | A | `LZ_SOLOMON_PHASE=a` (default) | Ethereum, Arbitrum, Optimism, Base, BSC, Polygon, Avalanche |
-| B / all | `LZ_SOLOMON_PHASE=b` or `all` | Phase A + extended list in `chain-config.ts` |
+| B / all | `LZ_SOLOMON_PHASE=b` or `all` | Phase A + extended list in `chain-config.ts` (includes **XDC** eid `30365`, **Plasma** eid `30383` — verify in [metadata](https://metadata.layerzero-api.com/v1/metadata) and [XDC](https://docs.layerzero.network/v2/deployments/chains/xdc) / [Plasma](https://docs.layerzero.network/v2/deployments/chains/plasma) docs) |
 
-Non-EVM targets (Sui, Aptos, Tron, etc.) are listed in `SOLOMON_MAINNET_NON_EVM_ROLLOUT` for planning; onboard using the matching track above.
+Non-EVM targets (Sui, Aptos, Tron, Stellar, etc.) are listed in `SOLOMON_MAINNET_NON_EVM_ROLLOUT` for planning; onboard using the matching track above.
