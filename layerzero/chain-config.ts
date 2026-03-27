@@ -72,6 +72,7 @@ export const SOLOMON_MAINNET_PHASE_B_EVM: readonly SolomonMainnetEvmChain[] = [
     { name: 'Berachain', eid: EndpointId.BERA_V2_MAINNET, hardhatNetwork: 'bera' },
     { name: 'Monad', eid: EndpointId.MONAD_V2_MAINNET, hardhatNetwork: 'monad' },
     { name: 'Movement', eid: EndpointId.MOVEMENT_V2_MAINNET, hardhatNetwork: 'movement' },
+    { name: 'Plasma', eid: EndpointId.PLASMA_V2_MAINNET, hardhatNetwork: 'plasma' },
     { name: 'Plume', eid: EndpointId.PLUME_V2_MAINNET, hardhatNetwork: 'plume' },
     { name: 'Initia', eid: EndpointId.INITIA_V2_MAINNET, hardhatNetwork: 'initia' },
     { name: 'IOTA EVM', eid: EndpointId.IOTA_V2_MAINNET, hardhatNetwork: 'iota' },
@@ -80,19 +81,35 @@ export const SOLOMON_MAINNET_PHASE_B_EVM: readonly SolomonMainnetEvmChain[] = [
     { name: 'Bahamut', eid: EndpointId.BAHAMUT_V2_MAINNET, hardhatNetwork: 'bahamut' },
     { name: 'Chiliz', eid: EndpointId.CHILIZ_V2_MAINNET, hardhatNetwork: 'chiliz' },
     { name: 'Peaq', eid: EndpointId.PEAQ_V2_MAINNET, hardhatNetwork: 'peaq' },
+    { name: 'XDC', eid: EndpointId.XDC_V2_MAINNET, hardhatNetwork: 'xdc' },
     { name: 'Aurora (NEAR)', eid: EndpointId.AURORA_V2_MAINNET, hardhatNetwork: 'aurora' },
 ]
+
+export type SolomonNonEvmTrack = 'canonical_svm' | 'move_sui' | 'move_aptos' | 'tron' | 'stellar'
+
+/**
+ * Non-EVM targets for rollout planning. `eid` is the LayerZero V2 endpoint id when published;
+ * use `null` only when metadata has a chain key but no mainnet V2 deployment yet.
+ */
+export type SolomonNonEvmRolloutEntry = {
+    name: string
+    eid: number | null
+    track: SolomonNonEvmTrack
+    /** Metadata `chainKey` (e.g. `stellar-mainnet-custom`) when `eid` is not yet listed. */
+    chainKey?: string
+}
 
 /**
  * Non-EVM / separate-tooling tracks (not wired by this repo’s default Hardhat EVM flow).
  * See `docs/solomon-rollout-chain-onboarding.md`.
  */
-export const SOLOMON_MAINNET_NON_EVM_ROLLOUT = [
-    { name: 'Solana', eid: SOLANA_MAINNET_EID, track: 'canonical_svm' as const },
-    { name: 'Sui', eid: 30378, track: 'move_sui' as const },
-    { name: 'Aptos', eid: 30108, track: 'move_aptos' as const },
-    { name: 'Tron', eid: 30420, track: 'tron' as const },
-] as const
+export const SOLOMON_MAINNET_NON_EVM_ROLLOUT: readonly SolomonNonEvmRolloutEntry[] = [
+    { name: 'Solana', eid: SOLANA_MAINNET_EID, track: 'canonical_svm' },
+    { name: 'Sui', eid: 30378, track: 'move_sui' },
+    { name: 'Aptos', eid: 30108, track: 'move_aptos' },
+    { name: 'Tron', eid: 30420, track: 'tron' },
+    { name: 'Stellar', eid: null, track: 'stellar', chainKey: 'stellar-mainnet-custom' },
+]
 
 export type SolomonPhase = 'a' | 'b' | 'all'
 
